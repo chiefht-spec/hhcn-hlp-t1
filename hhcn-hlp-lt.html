@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Học Tập: Tương Tác Hình Khối 3D & Thử Thách</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #f0fdfa;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 20px 20px;
+            overflow-x: hidden;
+        }
+
+        .notebook-paper {
+            background-color: white;
+            background-image: linear-gradient(#fecdd3 1px, transparent 1px), linear-gradient(#fecdd3 1px, transparent 1px), linear-gradient(#e5e7eb 1px, transparent 1px);
+            background-size: 100% 1px, 100% 1px, 100% 40px;
+            background-position: 0 40px, 0 44px, 0 84px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            line-height: 40px;
+        }
+
+        .blank-input {
+            border: none;
+            border-bottom: 2px dashed #0284c7;
+            background: transparent;
+            text-align: center;
+            font-weight: bold;
+            color: #0369a1;
+            outline: none;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.125rem;
+            padding: 0 5px;
+            transition: all 0.2s;
+            line-height: normal;
+            height: 30px;
+        }
+
+        .blank-input:focus { border-bottom-color: #f59e0b; background-color: #fffbeb; }
+        .blank-input.correct { border-bottom-color: #16a34a; color: #16a34a; border-bottom-style: solid; }
+        .blank-input.incorrect { border-bottom-color: #dc2626; color: #dc2626; animation: shake 0.4s 1; }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-3px); }
+            75% { transform: translateX(3px); }
+        }
+
+        /* --- 3D ENGINE CSS --- */
+        .scene {
+            perspective: 2000px;
+            width: 100%;
+            height: 450px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: grab;
+            user-select: none;
+            overflow: visible;
+        }
+        .scene:active { cursor: grabbing; }
+
+        .shape-wrapper { transform-style: preserve-3d; }
+        
+        .shape {
+            --fold-val: 90;
+            --fold: calc(var(--fold-val) * 1deg);
+            position: relative;
+            transform-style: preserve-3d;
+            transform: rotateX(var(--rx, -25deg)) rotateY(var(--ry, -35deg)) scale(var(--scale, 0.8));
+            transition: transform 0.1s ease-out;
+        }
+        
+        .shape.resetting { transition: transform 0.5s ease-in-out; }
+
+        .face {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+            text-shadow: 0px 1px 4px rgba(0,0,0,0.8);
+            transform-style: preserve-3d; 
+            backface-visibility: visible;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+        }
+
+        .vertex {
+            position: absolute;
+            font-size: 12px;
+            font-weight: 900;
+            width: 24px;
+            height: 24px;
+            background: white;
+            color: #1e293b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            border: 2px solid #cbd5e1;
+            transform: translate(-50%, -50%) translateZ(2px);
+            z-index: 10;
+            text-shadow: none;
+        }
+
+        .vertex.dup {
+            opacity: calc(1 - (var(--fold-val) / 90));
+            pointer-events: none;
+        }
+
+        .tl { top: 0; left: 0; }
+        .tr { top: 0; left: 100%; }
+        .bl { top: 100%; left: 0; }
+        .br { top: 100%; left: 100%; }
+
+        /* --- HÌNH HỘP CHỮ NHẬT --- */
+        #cuboid { --w: 180px; --h: 100px; --d: 100px; }
+        #scene1 .shape-wrapper { transform: translateY(-30px); }
+        
+        #cuboid .front  { width: var(--w); height: var(--h); background: rgba(56, 189, 248, 0.7);  top: 0; left: 0; }
+        #cuboid .top    { width: var(--w); height: var(--d); background: rgba(125, 211, 252, 0.7); top: calc(var(--d) * -1); left: 0; transform-origin: bottom; transform: rotateX(var(--fold)); }
+        #cuboid .bottom { width: var(--w); height: var(--d); background: rgba(125, 211, 252, 0.7); top: var(--h); left: 0; transform-origin: top;    transform: rotateX(calc(var(--fold) * -1)); }
+        #cuboid .left   { width: var(--d); height: var(--h); background: rgba(14, 165, 233, 0.7);  top: 0; left: calc(var(--d) * -1); transform-origin: right;  transform: rotateY(calc(var(--fold) * -1)); }
+        #cuboid .right  { width: var(--d); height: var(--h); background: rgba(14, 165, 233, 0.7);  top: 0; left: var(--w); transform-origin: left;   transform: rotateY(var(--fold)); }
+        #cuboid .back   { width: var(--w); height: var(--h); background: rgba(2, 132, 199, 0.7);   top: var(--d); left: 0;  transform-origin: top;    transform: rotateX(calc(var(--fold) * -1)); }
+
+        /* --- HÌNH LẬP PHƯƠNG --- */
+        #cube { --s: 120px; }
+        #scene2 .shape-wrapper { transform: translateY(-30px); }
+        
+        #cube .front  { width: var(--s); height: var(--s); background: rgba(74, 222, 128, 0.7); top: 0; left: 0; }
+        #cube .top    { width: var(--s); height: var(--s); background: rgba(134, 239, 172, 0.7); top: calc(var(--s) * -1); left: 0; transform-origin: bottom; transform: rotateX(var(--fold)); }
+        #cube .bottom { width: var(--s); height: var(--s); background: rgba(134, 239, 172, 0.7); top: var(--s); left: 0; transform-origin: top;    transform: rotateX(calc(var(--fold) * -1)); }
+        #cube .left   { width: var(--s); height: var(--s); background: rgba(34, 197, 94, 0.7);  top: 0; left: calc(var(--s) * -1); transform-origin: right;  transform: rotateY(calc(var(--fold) * -1)); }
+        #cube .right  { width: var(--s); height: var(--s); background: rgba(34, 197, 94, 0.7);  top: 0; left: var(--s); transform-origin: left;   transform: rotateY(var(--fold)); }
+        #cube .back   { width: var(--s); height: var(--s); background: rgba(22, 163, 74, 0.7);  top: var(--s); left: 0; transform-origin: top;    transform: rotateX(calc(var(--fold) * -1)); }
+
+        /* Sliders */
+        input[type=range] { -webkit-appearance: none; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: #0ea5e9; cursor: pointer; margin-top: -6px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+            border: 2px solid white;
+        }
+        .slider-fold::-webkit-slider-thumb { background: #f59e0b; height: 26px; width: 26px; margin-top: -9px; }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 8px; cursor: pointer; background: #cbd5e1; border-radius: 4px;
+        }
+
+        /* Quiz Specific Styles */
+        .fade-in { animation: fadeIn 0.4s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .option-btn {
+            transition: all 0.2s;
+            border: 2px solid #e5e7eb;
+        }
+        .option-btn:hover:not(:disabled) { border-color: #f59e0b; background-color: #fffbeb; transform: translateY(-2px); }
+        .option-btn.correct { background-color: #dcfce7; border-color: #22c55e; color: #166534; }
+        .option-btn.wrong { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .option-btn:disabled { cursor: not-allowed; }
+
+        /* Badge Animation */
+        .badge-container {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        .glow {
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.8);
+            animation: pulse-glow 2s infinite;
+        }
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+            50% { box-shadow: 0 0 40px rgba(251, 191, 36, 1); }
+            100% { box-shadow: 0 0 20px rgba(251, 191, 36, 0.6); }
+        }
+
+        /* Net Grid */
+        .net-grid { display: grid; grid-template-columns: repeat(4, 25px); grid-template-rows: repeat(3, 25px); gap: 1px; justify-content: center; margin: 0 auto;}
+        .net-cell { width: 25px; height: 25px; border-radius: 2px; }
+        .net-fill { background-color: #fca5a5; border: 1px solid #dc2626; }
+        .net-empty { background-color: transparent; }
+    </style>
+</head>
+<body class="text-gray-800 p-4 md:p-8 min-h-screen flex justify-center">
+
+    <div class="max-w-5xl w-full">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row justify-between items-center mb-6 no-print gap-4">
+            <h1 class="text-2xl font-black text-teal-800 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-teal-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
+                </svg>
+                Khám Phá Hình Khối 3D Toàn Diện
+            </h1>
+            <div class="flex gap-2">
+                <button onclick="checkAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-5 rounded-lg shadow-md transition duration-200">
+                    Kiểm tra điền từ
+                </button>
+                <button onclick="showAnswers()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-5 rounded-lg shadow-md transition duration-200">
+                    Hiện đáp án
+                </button>
+            </div>
+        </div>
+
+        <div class="notebook-paper rounded-xl p-6 md:p-10 mb-8 relative text-lg">
+            
+            <div class="text-center mb-6" style="line-height: 1.5;">
+                <h2 class="text-3xl font-extrabold text-blue-900 uppercase tracking-wide">
+                    Tóm Tắt: Hình Hộp Chữ Nhật & Hình Lập Phương
+                </h2>
+            </div>
+
+            <!-- SECTION I -->
+            <div class="mb-12 border-b-2 border-dashed border-gray-300 pb-10">
+                <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                    <h3 class="text-2xl font-bold text-blue-700 flex items-center gap-2" style="line-height: 1.5;">
+                        <span class="bg-blue-100 text-blue-700 rounded-full w-8 h-8 flex items-center justify-center text-lg">1</span>
+                        HÌNH HỘP CHỮ NHẬT ABCD.A'B'C'D'
+                    </h3>
+                    <button onclick="resetCamera('shape-1')" class="no-print text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded-md font-bold transition">
+                        ↺ Đặt lại góc nhìn
+                    </button>
+                </div>
+                
+                <div class="bg-slate-50 p-4 rounded-xl shadow-inner border border-slate-200 mb-8 overflow-hidden relative">
+                    <div class="absolute top-4 left-4 z-20 bg-white/90 p-3 rounded-lg shadow-md text-sm font-bold text-gray-700 space-y-3 no-print w-48 border border-gray-200">
+                        <div class="text-center text-blue-800 mb-1 border-b border-gray-200 pb-1">Tùy chỉnh kích thước</div>
+                        <div>
+                            <div class="flex justify-between"><span>Dài:</span> <span id="val-w">180</span></div>
+                            <input type="range" min="80" max="250" value="180" class="w-full" oninput="updateCSSVar('cuboid', '--w', this.value); document.getElementById('val-w').innerText = this.value;">
+                        </div>
+                        <div>
+                            <div class="flex justify-between"><span>Rộng:</span> <span id="val-d">100</span></div>
+                            <input type="range" min="50" max="150" value="100" class="w-full" oninput="updateCSSVar('cuboid', '--d', this.value); document.getElementById('val-d').innerText = this.value;">
+                        </div>
+                        <div>
+                            <div class="flex justify-between"><span>Cao:</span> <span id="val-h">100</span></div>
+                            <input type="range" min="50" max="150" value="100" class="w-full" oninput="updateCSSVar('cuboid', '--h', this.value); document.getElementById('val-h').innerText = this.value;">
+                        </div>
+                    </div>
+
+                    <div class="scene" id="scene1">
+                        <div class="shape-wrapper">
+                            <div class="shape" id="cuboid" data-id="shape-1">
+                                <div class="face front">Trước
+                                    <span class="vertex tl">D'</span> <span class="vertex tr">C'</span>
+                                    <span class="vertex bl">D</span>  <span class="vertex br">C</span>
+                                    
+                                    <div class="face top">Trên
+                                        <span class="vertex dup tl">A'</span> <span class="vertex dup tr">B'</span>
+                                        <span class="vertex dup bl">D'</span> <span class="vertex dup br">C'</span>
+                                    </div>
+                                    <div class="face bottom">Dưới
+                                        <span class="vertex dup tl">D</span> <span class="vertex dup tr">C</span>
+                                        <span class="vertex dup bl">A</span> <span class="vertex dup br">B</span>
+                                        <div class="face back">Sau
+                                            <span class="vertex tl">A</span>  <span class="vertex tr">B</span>
+                                            <span class="vertex bl">A'</span> <span class="vertex br">B'</span>
+                                        </div>
+                                    </div>
+                                    <div class="face left">Trái
+                                        <span class="vertex dup tl">A'</span> <span class="vertex dup tr">D'</span>
+                                        <span class="vertex dup bl">A</span>  <span class="vertex dup br">D</span>
+                                    </div>
+                                    <div class="face right">Phải
+                                        <span class="vertex dup tl">C'</span> <span class="vertex dup tr">B'</span>
+                                        <span class="vertex dup bl">C</span>  <span class="vertex dup br">B</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2 px-6 flex flex-col items-center gap-2 no-print relative z-20">
+                        <label class="font-extrabold text-blue-800 text-sm uppercase tracking-wider bg-blue-100 px-4 py-1 rounded-full">Kéo để Mở / Đóng hộp</label>
+                        <input type="range" min="0" max="90" value="90" class="max-w-md w-full slider-fold" 
+                               oninput="document.getElementById('cuboid').style.setProperty('--fold-val', this.value)">
+                    </div>
+                </div>
+
+                <div class="w-full text-justify">
+                    <p class="mb-2">a) Có 6 mặt đều là hình <input type="text" class="blank-input w-28" data-answer="chữ nhật">.</p>
+                    <p class="mb-2">b) Có 8 đỉnh là: A, B, C, D, <input type="text" class="blank-input w-10" data-answer="A'">, <input type="text" class="blank-input w-10" data-answer="B'">, <input type="text" class="blank-input w-10" data-answer="C'">, <input type="text" class="blank-input w-10" data-answer="D'">.</p>
+                    <p class="mb-2">c) Có 12 cạnh, gồm:</p>
+                    <ul class="list-disc ml-8 mb-2">
+                        <li>Các cạnh đáy: AB, BC, <input type="text" class="blank-input w-12" data-answer="CD|DC">, <input type="text" class="blank-input w-12" data-answer="DA|AD"> và A'B', B'C', <input type="text" class="blank-input w-12" data-answer="C'D'|D'C'">, <input type="text" class="blank-input w-12" data-answer="D'A'|A'D'">.</li>
+                        <li>Các cạnh bên: AA', BB', <input type="text" class="blank-input w-12" data-answer="CC'|C'C">, <input type="text" class="blank-input w-12" data-answer="DD'|D'D">.</li>
+                    </ul>
+                    <p class="mb-2">d) <strong>Góc ở đỉnh:</strong> Ở mỗi đỉnh có 3 góc vuông. Ví dụ ở đỉnh A có 3 góc vuông là: góc DAB, góc <input type="text" class="blank-input w-16" data-answer="DAA'|A'AD">, góc <input type="text" class="blank-input w-16" data-answer="BAA'|A'AB">.</p>
+                </div>
+            </div>
+
+            <!-- SECTION II -->
+            <div class="mb-12 border-b-2 border-dashed border-gray-300 pb-10">
+                <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                    <h3 class="text-2xl font-bold text-green-600 flex items-center gap-2" style="line-height: 1.5;">
+                        <span class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center text-lg">2</span>
+                        HÌNH LẬP PHƯƠNG MNPQ.M'N'P'Q'
+                    </h3>
+                    <button onclick="resetCamera('shape-2')" class="no-print text-sm bg-gray-200 hover:bg-gray-300 text-gray-700 py-1 px-3 rounded-md font-bold transition">
+                        ↺ Đặt lại góc nhìn
+                    </button>
+                </div>
+                
+                <div class="bg-slate-50 p-4 rounded-xl shadow-inner border border-slate-200 mb-8 overflow-hidden relative">
+                    <div class="absolute top-4 left-4 z-20 bg-white/90 p-3 rounded-lg shadow-md text-sm font-bold text-gray-700 space-y-2 no-print w-48 border border-gray-200">
+                        <div class="text-center text-green-700 mb-1 border-b border-gray-200 pb-1">Tùy chỉnh kích thước</div>
+                        <div>
+                            <div class="flex justify-between"><span>Độ dài cạnh:</span> <span id="val-s">120</span></div>
+                            <input type="range" min="60" max="180" value="120" class="w-full" oninput="updateCSSVar('cube', '--s', this.value); document.getElementById('val-s').innerText = this.value;">
+                        </div>
+                    </div>
+
+                    <div class="scene" id="scene2">
+                        <div class="shape-wrapper">
+                            <div class="shape" id="cube" data-id="shape-2">
+                                <div class="face front">Trước
+                                    <span class="vertex tl">M'</span> <span class="vertex tr">N'</span>
+                                    <span class="vertex bl">M</span>  <span class="vertex br">N</span>
+                                    <div class="face top">Trên
+                                        <span class="vertex dup tl">Q'</span> <span class="vertex dup tr">P'</span>
+                                        <span class="vertex dup bl">M'</span> <span class="vertex dup br">N'</span>
+                                    </div>
+                                    <div class="face bottom">Dưới
+                                        <span class="vertex dup tl">M</span> <span class="vertex dup tr">N</span>
+                                        <span class="vertex dup bl">Q</span> <span class="vertex dup br">P</span>
+                                        <div class="face back">Sau
+                                            <span class="vertex tl">Q</span>  <span class="vertex tr">P</span>
+                                            <span class="vertex bl">Q'</span> <span class="vertex br">P'</span>
+                                        </div>
+                                    </div>
+                                    <div class="face left">Trái
+                                        <span class="vertex dup tl">Q'</span> <span class="vertex dup tr">M'</span>
+                                        <span class="vertex dup bl">Q</span>  <span class="vertex dup br">M</span>
+                                    </div>
+                                    <div class="face right">Phải
+                                        <span class="vertex dup tl">N'</span> <span class="vertex dup tr">P'</span>
+                                        <span class="vertex dup bl">N</span>  <span class="vertex dup br">P</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-2 px-6 flex flex-col items-center gap-2 no-print relative z-20">
+                        <label class="font-extrabold text-green-700 text-sm uppercase tracking-wider bg-green-100 px-4 py-1 rounded-full">Kéo để Mở / Đóng hộp</label>
+                        <input type="range" min="0" max="90" value="90" class="max-w-md w-full slider-fold" 
+                               oninput="document.getElementById('cube').style.setProperty('--fold-val', this.value)">
+                    </div>
+                </div>
+
+                <div class="w-full text-justify">
+                    <p class="mb-2">a) Hình lập phương có 6 mặt đều là các hình <input type="text" class="blank-input w-20" data-answer="vuông"> bằng nhau.</p>
+                    <p class="mb-2">b) Có 12 cạnh đều <input type="text" class="blank-input w-28" data-answer="bằng nhau">. Ví dụ: MN = NP = <input type="text" class="blank-input w-12" data-answer="PQ|QP"> = <input type="text" class="blank-input w-12" data-answer="QM|MQ">.</p>
+                </div>
+            </div>
+
+            <!-- SECTION III: MINI QUIZ -->
+            <div id="challenge-section" class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl p-6 md:p-8 border-2 border-indigo-200 shadow-lg relative no-print overflow-hidden min-h-[400px]">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+                
+                <!-- Màn hình 1: Giới thiệu -->
+                <div id="quiz-intro" class="text-center py-8 fade-in">
+                    <div class="text-6xl mb-4">🎮</div>
+                    <h3 class="text-3xl font-black text-indigo-800 mb-4 uppercase tracking-wider">Đấu Trường Không Gian</h3>
+                    <p class="text-gray-600 mb-8 max-w-lg mx-auto leading-relaxed">
+                        Em đã nắm vững lý thuyết chưa? Hãy cùng vượt qua 10 câu hỏi thử thách. 
+                        Trả lời càng nhanh, điểm thưởng càng cao. Đúng 10/10 sẽ nhận được Huy hiệu Vàng!
+                    </p>
+                    <button onclick="startQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black py-3 px-10 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-1 transition duration-300 text-xl">
+                        SẴN SÀNG CHINH PHỤC!
+                    </button>
+                </div>
+
+                <!-- Màn hình 2: Đang làm bài -->
+                <div id="quiz-active" class="hidden flex-col h-full fade-in">
+                    <!-- Header Bar -->
+                    <div class="flex justify-between items-center mb-6 bg-white p-3 rounded-xl shadow-sm border border-indigo-100">
+                        <div class="font-bold text-indigo-700 bg-indigo-100 px-3 py-1 rounded-lg">
+                            Câu: <span id="q-current">1</span>/10
+                        </div>
+                        <div class="flex items-center gap-2 font-black text-rose-500 text-xl">
+                            ⏱ <span id="q-timer">15</span>s
+                        </div>
+                        <div class="font-bold text-amber-600 bg-amber-100 px-3 py-1 rounded-lg">
+                            Điểm: <span id="q-score">0</span>
+                        </div>
+                    </div>
+
+                    <!-- Question Container -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex-grow">
+                        <h4 id="q-text" class="text-xl font-bold text-gray-800 mb-6 leading-relaxed min-h-[60px]">
+                            <!-- Text câu hỏi -->
+                        </h4>
+                        
+                        <div id="q-options" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Nút đáp án sinh tự động -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Màn hình 3: Kết quả -->
+                <div id="quiz-result" class="hidden text-center py-8 fade-in flex flex-col items-center justify-center">
+                    <h3 class="text-3xl font-black text-indigo-800 mb-2">Hoàn Thành Thử Thách!</h3>
+                    <p class="text-gray-600 mb-6">Em đã hoàn thành 10 câu hỏi.</p>
+                    
+                    <div class="bg-white p-6 rounded-2xl shadow-md border border-indigo-100 w-full max-w-md mb-8">
+                        <div class="text-lg font-bold text-gray-500 mb-1">Tổng điểm của em</div>
+                        <div class="text-5xl font-black text-amber-500 mb-4" id="final-score">0</div>
+                        <div class="text-md font-bold text-indigo-600">Trả lời đúng: <span id="final-correct">0</span>/10 câu</div>
+                    </div>
+
+                    <!-- Khu vực hiển thị huy hiệu (chỉ hiện khi đúng 10/10) -->
+                    <div id="badge-area" class="hidden flex-col items-center">
+                        <div class="badge-container mb-4">
+                            <div class="w-40 h-40 bg-gradient-to-br from-yellow-300 to-yellow-600 rounded-full flex items-center justify-center glow border-4 border-white shadow-xl relative overflow-hidden">
+                                <div class="absolute inset-0 bg-white opacity-20 transform -skew-x-12 translate-x-full hover:translate-x-[-200%] transition-transform duration-1000"></div>
+                                <div class="text-center">
+                                    <div class="text-6xl mb-1">🏆</div>
+                                    <div class="text-white font-black text-sm uppercase tracking-widest drop-shadow-md">Tuyệt Đối</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="font-bold text-green-600 bg-green-100 px-4 py-2 rounded-lg">
+                            📸 Hãy chụp màn hình huy hiệu này nộp cho giáo viên nhé!
+                        </p>
+                    </div>
+
+                    <div id="encouragement" class="hidden font-bold text-rose-500 bg-rose-50 px-4 py-2 rounded-lg">
+                        Hãy xem lại lý thuyết ở trên và thử lại để lấy Huy hiệu Vàng nhé!
+                    </div>
+
+                    <button onclick="resetQuiz()" class="mt-8 text-indigo-600 font-bold hover:underline">
+                        ↻ Chơi lại từ đầu
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 3D & Drag Engine (Giữ nguyên) ---
+        function updateCSSVar(shapeId, varName, value) { document.getElementById(shapeId).style.setProperty(varName, value + 'px'); }
+        let shapeAngles = { 'shape-1': { rx: -25, ry: -35 }, 'shape-2': { rx: -25, ry: -35 } };
+
+        document.querySelectorAll('.scene').forEach(scene => {
+            let isDragging = false; let startX, startY;
+            const shape = scene.querySelector('.shape'); const shapeId = shape.getAttribute('data-id');
+            
+            scene.addEventListener('mousedown', (e) => { isDragging = true; startX = e.pageX; startY = e.pageY; shape.classList.remove('resetting'); });
+            scene.addEventListener('touchstart', (e) => { isDragging = true; startX = e.touches[0].pageX; startY = e.touches[0].pageY; shape.classList.remove('resetting'); });
+
+            const onMove = (pageX, pageY) => {
+                if(!isDragging) return;
+                shapeAngles[shapeId].ry += (pageX - startX) * 0.5;
+                shapeAngles[shapeId].rx -= (pageY - startY) * 0.5;
+                if(shapeAngles[shapeId].rx > 90) shapeAngles[shapeId].rx = 90;
+                if(shapeAngles[shapeId].rx < -90) shapeAngles[shapeId].rx = -90;
+                shape.style.setProperty('--rx', shapeAngles[shapeId].rx + 'deg');
+                shape.style.setProperty('--ry', shapeAngles[shapeId].ry + 'deg');
+                startX = pageX; startY = pageY;
+            };
+
+            window.addEventListener('mousemove', (e) => onMove(e.pageX, e.pageY));
+            window.addEventListener('touchmove', (e) => { if(isDragging && e.target.closest('.scene')) { e.preventDefault(); onMove(e.touches[0].pageX, e.touches[0].pageY); } }, {passive: false});
+            window.addEventListener('mouseup', () => { isDragging = false; });
+            window.addEventListener('touchend', () => { isDragging = false; });
+        });
+
+        function resetCamera(shapeId) {
+            const shape = document.querySelector(`.shape[data-id="${shapeId}"]`); shape.classList.add('resetting');
+            shapeAngles[shapeId] = { rx: -25, ry: -35 }; shape.style.setProperty('--rx', '-25deg'); shape.style.setProperty('--ry', '-35deg');
+        }
+
+        // --- Điền từ Logic ---
+        function checkAnswers() {
+            let allCorrect = true;
+            document.querySelectorAll('.blank-input').forEach(input => {
+                const ans = input.getAttribute('data-answer').split('|').map(s => s.toUpperCase().replace(/\s+/g, '')); 
+                const val = input.value.toUpperCase().replace(/\s+/g, '');
+                input.classList.remove('correct', 'incorrect');
+                if (ans.includes(val)) input.classList.add('correct');
+                else { input.classList.add('incorrect'); allCorrect = false; }
+            });
+            if(allCorrect) alert("Tuyệt vời! Em đã điền đúng toàn bộ lý thuyết.");
+        }
+
+        function showAnswers() {
+            document.querySelectorAll('.blank-input').forEach(input => {
+                input.value = input.getAttribute('data-answer').split('|')[0];
+                input.classList.remove('incorrect'); input.classList.add('correct');
+            });
+        }
+        document.querySelectorAll('.blank-input').forEach(i => i.addEventListener('input', function(){this.classList.remove('correct', 'incorrect')}));
+
+        // --- MINI QUIZ SYSTEM ---
+        const questions = [
+            { text: "Hình hộp chữ nhật có bao nhiêu mặt, bao nhiêu đỉnh, bao nhiêu cạnh?", options: [
+                { text: "6 mặt, 8 đỉnh, 12 cạnh", isCorrect: true }, { text: "6 mặt, 12 đỉnh, 8 cạnh", isCorrect: false },
+                { text: "8 mặt, 6 đỉnh, 12 cạnh", isCorrect: false }, { text: "8 mặt, 12 đỉnh, 6 cạnh", isCorrect: false }
+            ]},
+            { text: "Các mặt của hình hộp chữ nhật đều là hình gì?", options: [
+                { text: "Hình thoi", isCorrect: false }, { text: "Hình chữ nhật", isCorrect: true },
+                { text: "Hình bình hành", isCorrect: false }, { text: "Hình vuông", isCorrect: false }
+            ]},
+            { text: "Đặc điểm các mặt của HÌNH LẬP PHƯƠNG là gì?", options: [
+                { text: "Là các hình chữ nhật bằng nhau", isCorrect: false }, { text: "Là các hình vuông bằng nhau", isCorrect: true },
+                { text: "Chỉ có 4 mặt bên là hình vuông", isCorrect: false }, { text: "2 mặt đáy hình vuông, 4 mặt bên hình chữ nhật", isCorrect: false }
+            ]},
+            { text: "Tại MỘT ĐỈNH của hình hộp chữ nhật có chứa bao nhiêu góc vuông?", options: [
+                { text: "1 góc vuông", isCorrect: false }, { text: "2 góc vuông", isCorrect: false },
+                { text: "3 góc vuông", isCorrect: true }, { text: "4 góc vuông", isCorrect: false }
+            ]},
+            { text: "Phát biểu nào sau đây là ĐÚNG?", options: [
+                { text: "Hình hộp chữ nhật có 12 cạnh bằng nhau.", isCorrect: false },
+                { text: "Hình lập phương là trường hợp đặc biệt của hình hộp chữ nhật.", isCorrect: true },
+                { text: "Hình lập phương có các mặt đối diện không bằng nhau.", isCorrect: false },
+                { text: "Hình hộp chữ nhật không thể có mặt nào là hình vuông.", isCorrect: false }
+            ]},
+            { text: "Hình hộp chữ nhật ABCD.A'B'C'D' có các cạnh bên là:", options: [
+                { text: "AB, BC, CD, DA", isCorrect: false }, { text: "A'B', B'C', C'D', D'A'", isCorrect: false },
+                { text: "AA', BB', CC', DD'", isCorrect: true }, { text: "AC, BD, A'C', B'D'", isCorrect: false }
+            ]},
+            { text: "Trong hình hộp chữ nhật, khẳng định nào về 'Hai mặt đối diện' là đúng?", options: [
+                { text: "Chúng luôn cắt nhau.", isCorrect: false }, { text: "Chúng là hai hình chữ nhật bằng nhau.", isCorrect: true },
+                { text: "Chúng có chung một cạnh.", isCorrect: false }, { text: "Một mặt lớn hơn mặt kia.", isCorrect: false }
+            ]},
+            { text: "Hình khai triển nào dưới đây khi gập lại sẽ tạo thành một hình lập phương kín?", options: [
+                { text: "Hình chữ T (gồm 4 hình vuông dọc, 2 hình vuông ngang ở hai bên)", isCorrect: false },
+                { text: "Hình chữ thập (gồm 4 hình vuông dọc, 1 bên trái, 1 bên phải ở ô số 2)", isCorrect: true },
+                { text: "Gồm 5 hình vuông xếp thành 1 hàng dọc, 1 hình vuông bên cạnh", isCorrect: false },
+                { text: "Gồm 6 hình vuông xếp thành 1 hàng ngang", isCorrect: false }
+            ]},
+            { text: "Điều nào sau đây là SAI khi nói về Hình Lập Phương?", options: [
+                { text: "Có 6 mặt đều là hình vuông.", isCorrect: false }, { text: "Các đường chéo của các mặt đều bằng nhau.", isCorrect: false },
+                { text: "Chỉ có 4 cạnh bên bằng nhau, các cạnh đáy dài hơn.", isCorrect: true }, { text: "Có 12 cạnh bằng nhau.", isCorrect: false }
+            ]},
+            { text: "Nếu cắt một hình hộp chữ nhật (rỗng bên trong) theo một số cạnh rồi trải phẳng ra mặt bàn, ta sẽ thấy gì?", options: [
+                { text: "1 hình chữ nhật lớn", isCorrect: false }, { text: "6 hình chữ nhật rời rạc nhau", isCorrect: false },
+                { text: "Một mảnh giấy liền mạch gồm 6 hình chữ nhật", isCorrect: true }, { text: "Một mảnh giấy gồm 8 hình chữ nhật", isCorrect: false }
+            ]}
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let correctCount = 0;
+        let timeLeft = 15;
+        let timerInterval;
+        let isProcessing = false;
+
+        // UI Elements
+        const elIntro = document.getElementById('quiz-intro');
+        const elActive = document.getElementById('quiz-active');
+        const elResult = document.getElementById('quiz-result');
+        const elQText = document.getElementById('q-text');
+        const elQOptions = document.getElementById('q-options');
+        const elTimer = document.getElementById('q-timer');
+        const elScore = document.getElementById('q-score');
+        const elCurrent = document.getElementById('q-current');
+
+        function startQuiz() {
+            elIntro.classList.add('hidden');
+            elResult.classList.add('hidden');
+            elActive.classList.remove('hidden');
+            resetQuizState();
+            loadQuestion();
+        }
+
+        function resetQuizState() {
+            currentQuestion = 0;
+            score = 0;
+            correctCount = 0;
+            elScore.innerText = score;
+        }
+
+        function loadQuestion() {
+            isProcessing = false;
+            clearInterval(timerInterval);
+            
+            const q = questions[currentQuestion];
+            elCurrent.innerText = currentQuestion + 1;
+            elQText.innerText = `Câu ${currentQuestion + 1}: ${q.text}`;
+            
+            elQOptions.innerHTML = '';
+            
+            // Xáo trộn đáp án
+            let options = [...q.options];
+            options.sort(() => Math.random() - 0.5);
+
+            options.forEach((opt, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn w-full text-left p-4 rounded-xl bg-gray-50 font-semibold text-gray-700 hover:text-indigo-700 flex items-center gap-3';
+                
+                // Ký tự A, B, C, D
+                const letter = String.fromCharCode(65 + index);
+                
+                btn.innerHTML = `<span class="w-8 h-8 rounded-full bg-white border border-gray-300 flex items-center justify-center flex-shrink-0 font-bold">${letter}</span> 
+                                 <span class="flex-grow">${opt.text}</span>`;
+                
+                btn.onclick = () => handleAnswer(btn, opt.isCorrect);
+                elQOptions.appendChild(btn);
+            });
+
+            // Start Timer
+            timeLeft = 15;
+            elTimer.innerText = timeLeft;
+            elTimer.parentElement.classList.remove('text-rose-500');
+            elTimer.parentElement.classList.add('text-indigo-600');
+            
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                elTimer.innerText = timeLeft;
+                if(timeLeft <= 5) {
+                    elTimer.parentElement.classList.remove('text-indigo-600');
+                    elTimer.parentElement.classList.add('text-rose-500', 'animate-pulse');
+                }
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleAnswer(null, false); // Hết giờ = Sai
+                }
+            }, 1000);
+        }
+
+        function handleAnswer(btnElement, isCorrect) {
+            if(isProcessing) return;
+            isProcessing = true;
+            clearInterval(timerInterval);
+            elTimer.parentElement.classList.remove('animate-pulse');
+
+            // Block tất cả nút
+            const buttons = elQOptions.querySelectorAll('button');
+            buttons.forEach(b => b.disabled = true);
+
+            if(isCorrect) {
+                if(btnElement) btnElement.classList.add('correct');
+                correctCount++;
+                // Tính điểm: Cơ bản 100 + Thưởng thời gian (max 150)
+                const points = 100 + (timeLeft * 10);
+                score += points;
+                
+                // Hiệu ứng cộng điểm
+                elScore.innerText = score;
+                elScore.parentElement.classList.add('scale-110', 'bg-green-100', 'text-green-700');
+                setTimeout(() => elScore.parentElement.classList.remove('scale-110', 'bg-green-100', 'text-green-700'), 300);
+
+            } else {
+                if(btnElement) btnElement.classList.add('wrong');
+                // Tìm nút đúng để highlight
+                buttons.forEach(b => {
+                    const q = questions[currentQuestion];
+                    // So sánh text để tìm đáp án đúng ban đầu
+                    const correctOpt = q.options.find(o => o.isCorrect).text;
+                    if(b.innerHTML.includes(correctOpt)) {
+                        b.classList.remove('bg-gray-50');
+                        b.classList.add('border-green-400', 'bg-green-50');
+                    }
+                });
+            }
+
+            // Đợi 1.5s rồi qua câu mới
+            setTimeout(() => {
+                currentQuestion++;
+                if(currentQuestion < questions.length) {
+                    // Reset animation trick
+                    elActive.classList.remove('fade-in');
+                    void elActive.offsetWidth; // trigger reflow
+                    elActive.classList.add('fade-in');
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1500);
+        }
+
+        function showResult() {
+            elActive.classList.add('hidden');
+            elResult.classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('final-correct').innerText = correctCount;
+
+            const badgeArea = document.getElementById('badge-area');
+            const encour = document.getElementById('encouragement');
+
+            if(correctCount === 10) {
+                badgeArea.classList.remove('hidden');
+                badgeArea.classList.add('flex');
+                encour.classList.add('hidden');
+            } else {
+                badgeArea.classList.add('hidden');
+                badgeArea.classList.remove('flex');
+                encour.classList.remove('hidden');
+            }
+        }
+
+        function resetQuiz() {
+            elResult.classList.add('hidden');
+            elIntro.classList.remove('hidden');
+            // Cuộn lên phần thử thách
+            document.getElementById('challenge-section').scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+    </script>
+</body>
+</html>
