@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Học viện Không gian 3D - Bảng Nhiệm Vụ Hoàn Chỉnh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 50%);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .tab-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* Elements cho Trạm 2 */
+        .net-square {
+            width: 30px; height: 30px;
+            background-color: #38bdf8;
+            border: 1px solid #0284c7;
+            position: absolute;
+            border-radius: 4px;
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.3);
+            transition: all 0.3s;
+        }
+        .net-container:hover .net-square { background-color: #f472b6; border-color: #be185d; }
+
+        /* Animations */
+        @keyframes slideIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-slide { animation: slideIn 0.5s ease-out forwards; }
+        
+        @keyframes pop { 0% { transform: scale(0.9); opacity: 0; } 50% { transform: scale(1.05); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+        .pop-anim { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex justify-center items-start">
+
+    <div class="max-w-6xl w-full mx-auto space-y-6">
+        
+        <!-- Header -->
+        <header class="text-center space-y-2 animate-slide">
+            <div class="inline-block px-4 py-1 rounded-full bg-blue-900/50 border border-blue-500/30 text-blue-300 text-sm font-bold uppercase tracking-widest mb-2 shadow-[0_0_15px_rgba(56,189,248,0.2)]">
+                <i class="fa-solid fa-graduation-cap mr-2"></i>Học viện Không gian 3D
+            </div>
+            <h1 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-emerald-400 pb-2">
+                HỒ SƠ THỰC TẬP SINH
+            </h1>
+            <p class="text-slate-400 text-lg">Vượt qua các phân xưởng bên dưới để mở khóa Huy hiệu Kiến trúc sư Toán học.</p>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <div class="flex flex-col md:flex-row gap-3 justify-center animate-slide" style="animation-delay: 0.1s;">
+            <button onclick="switchTab('tab1')" id="btn-tab1" class="tab-btn active flex-1 py-3 px-4 rounded-2xl border border-slate-700 bg-slate-800 text-slate-300 font-bold text-base md:text-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-hammer"></i> Phân xưởng 1: Thực nghiệm
+            </button>
+            <button onclick="switchTab('tab2')" id="btn-tab2" class="tab-btn flex-1 py-3 px-4 rounded-2xl border border-slate-700 bg-slate-800 text-slate-300 font-bold text-base md:text-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-layer-group"></i> Phân xưởng 2: Radar 2D
+            </button>
+        </div>
+
+        <!-- ================= CONTENT TAB 1: THỰC NGHIỆM ĐẤT SÉT ================= -->
+        <div id="content-tab1" class="glass-panel rounded-3xl p-6 md:p-10 animate-slide block" style="animation-delay: 0.2s;">
+            <div class="flex flex-col lg:flex-row gap-10">
+                <div class="flex-1 space-y-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-emerald-400 flex items-center gap-3 mb-4">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500/20 text-emerald-400 text-sm">1</span>
+                            Nhận Vật Tư
+                        </h2>
+                        <div class="grid grid-cols-3 gap-4">
+                            <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center hover:border-emerald-500/50 transition">
+                                <i class="fa-solid fa-circle text-3xl text-orange-500 mb-2 drop-shadow-md"></i>
+                                <p class="text-sm font-semibold">Đất sét (Vo tròn)</p>
+                                <p class="text-xs text-slate-500">Đóng vai trò: Đỉnh</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center hover:border-emerald-500/50 transition">
+                                <i class="fa-solid fa-grip-lines-vertical text-3xl text-amber-600 mb-2"></i>
+                                <p class="text-sm font-semibold">Que tăm</p>
+                                <p class="text-xs text-slate-500">Đóng vai trò: Cạnh</p>
+                            </div>
+                            <div class="bg-slate-800/80 p-4 rounded-xl border border-slate-700 text-center hover:border-emerald-500/50 transition">
+                                <i class="fa-solid fa-bezier-curve text-3xl text-red-500 mb-2"></i>
+                                <p class="text-sm font-semibold">Chỉ đỏ</p>
+                                <p class="text-xs text-slate-500">Tìm Đường chéo</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h2 class="text-2xl font-bold text-cyan-400 flex items-center gap-3 mb-4">
+                            <span class="flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500/20 text-cyan-400 text-sm">2</span>
+                            Nhiệm Vụ Nhóm Đôi
+                        </h2>
+                        <ul class="space-y-4 text-slate-300">
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-play text-cyan-500 mt-1 text-sm"></i>
+                                <div><b class="text-white">Kiến trúc sư:</b> Vo tròn đất sét thành các viên nhỏ làm <b>đỉnh</b>. Sau đó, dùng que tăm cắm nối các viên đất sét lại để tạo thành khung 1 Hình hộp chữ nhật và 1 Hình lập phương.</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-play text-cyan-500 mt-1 text-sm"></i>
+                                <div><b class="text-white">Kiểm định viên:</b> Dùng sợi chỉ đỏ nối 2 đỉnh đất sét đối diện (nằm xuyên qua không gian bên trong khối) để tìm Đường chéo.</div>
+                            </li>
+                            <li class="flex items-start gap-3">
+                                <i class="fa-solid fa-play text-cyan-500 mt-1 text-sm"></i>
+                                <div><b class="text-white">Cả hai:</b> Cùng đếm số lượng vật tư đã dùng và nhập vào hệ thống Nghiệm thu bên cạnh.</div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="lg:w-[400px] shrink-0">
+                    <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-600 relative overflow-hidden">
+                        <div class="absolute -top-10 -right-10 text-9xl text-slate-700/20"><i class="fa-solid fa-clipboard-check"></i></div>
+                        <h3 class="text-xl font-bold text-white border-b border-slate-600 pb-3 mb-5 relative z-10">BÁO CÁO NGHIỆM THU</h3>
+                        
+                        <div class="space-y-4 relative z-10">
+                            <div class="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                                <span class="font-semibold text-slate-300"><i class="fa-solid fa-circle text-xs text-orange-500 mr-2"></i>Số Đỉnh (Đất sét)</span>
+                                <input type="number" id="inp-dinh" class="w-16 h-10 bg-slate-800 border-2 border-slate-600 rounded-lg text-center font-bold text-lg text-white focus:border-cyan-500 focus:outline-none transition">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                                <span class="font-semibold text-slate-300"><i class="fa-solid fa-minus text-amber-600 mr-2"></i>Số Cạnh (Que tăm)</span>
+                                <input type="number" id="inp-canh" class="w-16 h-10 bg-slate-800 border-2 border-slate-600 rounded-lg text-center font-bold text-lg text-white focus:border-cyan-500 focus:outline-none transition">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                                <span class="font-semibold text-slate-300"><i class="fa-solid fa-square text-xs text-blue-400 mr-2"></i>Số Mặt (Các vách)</span>
+                                <input type="number" id="inp-mat" class="w-16 h-10 bg-slate-800 border-2 border-slate-600 rounded-lg text-center font-bold text-lg text-white focus:border-cyan-500 focus:outline-none transition">
+                            </div>
+                            <div class="flex items-center justify-between bg-slate-900/50 p-3 rounded-lg border border-slate-700">
+                                <span class="font-semibold text-slate-300"><i class="fa-solid fa-slash text-xs text-red-500 mr-2"></i>Số Đường chéo</span>
+                                <input type="number" id="inp-cheo" class="w-16 h-10 bg-slate-800 border-2 border-slate-600 rounded-lg text-center font-bold text-lg text-white focus:border-cyan-500 focus:outline-none transition">
+                            </div>
+                        </div>
+
+                        <button onclick="checkTask1()" class="w-full mt-6 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold py-3 px-4 rounded-xl shadow-[0_0_15px_rgba(16,185,129,0.3)] transition transform hover:-translate-y-1 relative z-10">
+                            TRÌNH DUYỆT BÁO CÁO
+                        </button>
+                        <div id="feedback-tab1" class="hidden mt-4 text-center p-3 rounded-lg font-bold"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= CONTENT TAB 2: KHAI TRIỂN RADAR ================= -->
+        <div id="content-tab2" class="glass-panel rounded-3xl p-6 md:p-10 animate-slide hidden">
+            <div class="text-center max-w-2xl mx-auto mb-8">
+                <h2 class="text-3xl font-black text-pink-400 mb-3">Hệ thống Radar Tiên tri</h2>
+                <p class="text-slate-300">Trước khi dùng kéo cắt giấy để kiểm chứng, hãy "dự đoán" xem hình khai triển nào dưới đây có thể gấp thành một <b>Khối lập phương</b> kín?</p>
+            </div>
+
+            <!-- Nets Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Net 1 -->
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700 flex flex-col items-center group">
+                    <h3 class="text-lg font-bold text-slate-200 mb-6">Mẫu Alpha</h3>
+                    <div class="relative w-32 h-40 net-container mb-6">
+                        <div class="net-square" style="top: 0px; left: 45px;"></div>
+                        <div class="net-square" style="top: 35px; left: 10px;"></div>
+                        <div class="net-square" style="top: 35px; left: 45px;"></div>
+                        <div class="net-square" style="top: 35px; left: 80px;"></div>
+                        <div class="net-square" style="top: 70px; left: 45px;"></div>
+                        <div class="net-square" style="top: 105px; left: 45px;"></div>
+                    </div>
+                    <div class="flex gap-2 w-full mt-auto" id="btns-net1">
+                        <button onclick="answerNet(1, true)" class="flex-1 py-2 bg-slate-700 hover:bg-emerald-600 text-white rounded-lg transition font-semibold text-sm border border-slate-600"><i class="fa-solid fa-box mr-1"></i> Gấp được</button>
+                        <button onclick="answerNet(1, false)" class="flex-1 py-2 bg-slate-700 hover:bg-red-500 text-white rounded-lg transition font-semibold text-sm border border-slate-600"><i class="fa-solid fa-ban mr-1"></i> Bị hở</button>
+                    </div>
+                    <div id="res-net1" class="hidden w-full text-center mt-3 font-bold text-sm"></div>
+                </div>
+
+                <!-- Net 2 -->
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700 flex flex-col items-center group">
+                    <h3 class="text-lg font-bold text-slate-200 mb-6">Mẫu Beta</h3>
+                    <div class="relative w-32 h-40 net-container mb-6">
+                        <div class="net-square" style="top: 0px; left: 30px;"></div>
+                        <div class="net-square" style="top: 35px; left: 30px;"></div>
+                        <div class="net-square" style="top: 70px; left: 30px;"></div>
+                        <div class="net-square" style="top: 105px; left: 30px;"></div>
+                        <div class="net-square" style="top: 140px; left: 30px;"></div>
+                        <div class="net-square" style="top: 70px; left: 65px;"></div>
+                    </div>
+                    <div class="flex gap-2 w-full mt-auto" id="btns-net2">
+                        <button onclick="answerNet(2, true)" class="flex-1 py-2 bg-slate-700 hover:bg-emerald-600 text-white rounded-lg transition font-semibold text-sm border border-slate-600"><i class="fa-solid fa-box mr-1"></i> Gấp được</button>
+                        <button onclick="answerNet(2, false)" class="flex-1 py-2 bg-slate-700 hover:bg-red-500 text-white rounded-lg transition font-semibold text-sm border border-slate-600"><i class="fa-solid fa-ban mr-1"></i> Bị hở</button>
+                    </div>
+                    <div id="res-net2" class="hidden w-full text-center mt-3 font-bold text-sm"></div>
+                </div>
+
+                <!-- Net 3 -->
+                <div class="bg-slate-800/60 p-5 rounded-2xl border border-slate-700 flex flex-col items-center group">
+                    <h3 class="text-lg font-bold text-slate-200 mb-6">Mẫu Gamma</h3>
+                    <div class="relative w-32 h-40 net-container mb-6">
+                        <div class="net-square" style="top: 15px; left: 10px;"></div>
+                        <div class="net-square" style="top: 15px; left: 45px;"></div>
+                        <div class="net-square" style="top: 50px; left: 45px;"></div>
+                        <div class="net-square" style="top: 50px; left: 80px;"></div>
+                        <div class="net-square" style="top: 85px; left: 80px;"></div>
+                        <div class="net-square" style="top: 85px; left: 115px;"></div>
+                    </div>
+                    <div class="flex gap-2 w-full mt-auto" id="btns-net3">
+                        <button onclick="answerNet(3, true)" class="flex-1 py-2 bg-slate-700 hover:bg-emerald-600 text-white rounded-lg transition font-semibold text-sm border border-slate-600"><i class="fa-solid fa-box mr-1"></i> Gấp được</button>
+                        <button onclick="answerNet(3, false)" class="flex-1 py-2 bg-slate-700 hover:bg-red-500 text-white rounded-lg transition font-semibold text-sm border border-slate-600"><i class="fa-solid fa-ban mr-1"></i> Bị hở</button>
+                    </div>
+                    <div id="res-net3" class="hidden w-full text-center mt-3 font-bold text-sm"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script Logic xử lý sự kiện -->
+    <script>
+        // Hàm chuyển đổi các Tab
+        function switchTab(tabId) {
+            // Ẩn tất cả nội dung
+            document.querySelectorAll('.glass-panel').forEach(el => {
+                el.classList.add('hidden');
+                el.classList.remove('block');
+            });
+            // Xóa active khỏi các nút
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('active');
+            });
+
+            // Hiển thị tab được chọn
+            document.getElementById('content-' + tabId).classList.remove('hidden');
+            document.getElementById('content-' + tabId).classList.add('block');
+            document.getElementById('btn-' + tabId).classList.add('active');
+        }
+
+        // Hàm kiểm tra bài tập 1 (Phân xưởng 1)
+        function checkTask1() {
+            const dinh = document.getElementById('inp-dinh').value;
+            const canh = document.getElementById('inp-canh').value;
+            const mat = document.getElementById('inp-mat').value;
+            const cheo = document.getElementById('inp-cheo').value;
+            const feedback = document.getElementById('feedback-tab1');
+
+            feedback.classList.remove('hidden', 'text-emerald-400', 'text-red-400', 'bg-emerald-500/20', 'bg-red-500/20');
+
+            // Đáp án chuẩn của hình hộp chữ nhật/lập phương: 8 đỉnh, 12 cạnh, 6 mặt, 4 đường chéo
+            if (dinh == 8 && canh == 12 && mat == 6 && cheo == 4) {
+                feedback.innerHTML = '<i class="fa-solid fa-check-circle mr-2"></i>Báo cáo chính xác! Bạn đã nắm rõ cấu tạo cơ bản.';
+                feedback.classList.add('text-emerald-400', 'bg-emerald-500/20');
+            } else {
+                feedback.innerHTML = '<i class="fa-solid fa-triangle-exclamation mr-2"></i>Số liệu chưa chuẩn xác. Hãy đếm lại nhé!';
+                feedback.classList.add('text-red-400', 'bg-red-500/20');
+            }
+        }
+
+        // Hàm kiểm tra bài tập 2 (Phân xưởng 2)
+        function answerNet(netId, userGuessForm) {
+            const res = document.getElementById('res-net' + netId);
+            res.classList.remove('hidden', 'text-emerald-400', 'text-red-400');
+            
+            // Đáp án thực tế: 
+            // Alpha (Mẫu 1) - Gấp được (true)
+            // Beta (Mẫu 2) - 5 hình vuông thẳng hàng -> Không gấp được (false)
+            // Gamma (Mẫu 3) - Hình bậc thang -> Gấp được (true)
+            
+            let isCorrect = false;
+            if (netId === 1 && userGuessForm === true) isCorrect = true;
+            if (netId === 2 && userGuessForm === false) isCorrect = true;
+            if (netId === 3 && userGuessForm === true) isCorrect = true;
+
+            if (isCorrect) {
+                res.innerHTML = '<i class="fa-solid fa-check"></i> Suy luận xuất sắc!';
+                res.classList.add('text-emerald-400');
+            } else {
+                res.innerHTML = '<i class="fa-solid fa-xmark"></i> Sai rồi. Hãy tưởng tượng gập nó lại nhé!';
+                res.classList.add('text-red-400');
+            }
+        }
+    </script>
+</body>
+</html>
