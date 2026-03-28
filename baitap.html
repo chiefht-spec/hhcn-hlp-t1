@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thực Hành & Luyện Tập - Thể Tích & Diện Tích</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .text-book-font { font-family: "Times New Roman", Times, serif; }
+        html { scroll-behavior: smooth; }
+        input[type=text] { font-variant-numeric: tabular-nums; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen p-4 md:p-8">
+
+    <div class="max-w-5xl mx-auto space-y-12">
+        <!-- Header -->
+        <header class="text-center bg-white p-8 rounded-3xl shadow-sm border border-slate-200">
+            <h1 class="text-3xl md:text-4xl font-black text-slate-800 mb-3 tracking-tight">Thực Hành & Luyện Tập</h1>
+            <p class="text-slate-500 font-medium text-lg">Toán 7 Tập 1 - Trang 52, 53 (Chân trời sáng tạo)</p>
+            <div class="flex flex-wrap justify-center gap-2 mt-4">
+                <span class="px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-xs font-bold">Thực hành</span>
+                <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-bold">Vận dụng</span>
+                <span class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Bài 1</span>
+                <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold">Bài 2</span>
+                <span class="px-3 py-1 bg-rose-100 text-rose-700 rounded-full text-xs font-bold">Bài 3</span>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- 1. THỰC HÀNH (KHỐI BÊ TÔNG)                -->
+        <!-- ========================================== -->
+        <section id="sec-thuchanh" class="border-t-4 border-indigo-500 pt-8">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-indigo-600 text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider shadow-md">Thực Hành</span>
+                <h2 class="text-2xl font-bold text-slate-800">Khối bê tông (Trang 52)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                    <p class="mb-4 text-slate-700 leading-relaxed">
+                        Người ta đổ một khối bê tông như <strong>Hình 3</strong> (gồm 2 khối hộp chữ nhật xếp chồng lên nhau).
+                    </p>
+                    
+                    <!-- SVG Minh họa Khối Bê Tông (Đã được vẽ lại chính xác 100% theo SGK) -->
+                    <div class="w-full bg-slate-50 rounded-xl border border-slate-200 mb-6 flex justify-center items-center py-6">
+                        <svg viewBox="0 0 320 240" class="w-full max-w-[320px] h-auto drop-shadow-sm mx-auto">
+                            <g stroke="#1e293b" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round">
+                                <!-- Mặt trên -->
+                                <polygon points="60,40 140,40 180,10 100,10" fill="#ffffff" />
+                                <polygon points="140,140 260,140 300,110 180,110" fill="#ffffff" />
+                                
+                                <!-- Mặt trước -->
+                                <polygon points="60,40 140,40 140,140 60,140" fill="#f8fafc" />
+                                <polygon points="60,140 260,140 260,200 60,200" fill="#f8fafc" />
+                                
+                                <!-- Mặt phải -->
+                                <polygon points="140,40 180,10 180,110 140,140" fill="#e2e8f0" />
+                                <polygon points="260,140 300,110 300,170 260,200" fill="#e2e8f0" />
+                            </g>
+                            
+                            <g class="text-book-font font-bold text-[14px]" fill="#1e293b">
+                                <!-- Chữ mặt trước khối trên -->
+                                <text x="75" y="60">4 m</text>
+                                <text x="90" y="100">5 m</text>
+                                
+                                <!-- Chữ mặt phải khối trên -->
+                                <text x="145" y="70">5 m</text>
+                                
+                                <!-- Chữ mặt trước khối dưới -->
+                                <text x="225" y="180">3 m</text>
+                                
+                                <!-- Mũi tên và chữ 6m -->
+                                <g stroke="#1e293b" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="150" y1="125" x2="250" y2="125" />
+                                    <polyline points="156,120 150,125 156,130" />
+                                    <polyline points="244,120 250,125 244,130" />
+                                </g>
+                                <text x="185" y="118">6 m</text>
+
+                                <!-- Mũi tên và chữ 5m (bên trái) -->
+                                <g stroke="#1e293b" stroke-width="1.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="40" y1="150" x2="80" y2="120" />
+                                    <polyline points="47,148 40,150 43,143" />
+                                    <polyline points="73,122 80,120 77,127" />
+                                </g>
+                                <text x="35" y="125">5 m</text>
+                            </g>
+                            <text x="160" y="235" font-style="italic" text-anchor="middle" fill="#475569" class="text-book-font text-[15px]">Hình 3</text>
+                        </svg>
+                    </div>
+
+                    <div class="mt-auto text-sm text-slate-700 space-y-2">
+                        <p>a) Tính chi phí sơn các mặt (trừ mặt tiếp đất), biết giá sơn là <strong>25.000 đ/m&sup2;</strong>.</p>
+                        <p>b) Tính thể tích của khối bê tông đó.</p>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between">
+                    <div class="space-y-4">
+                        <h3 class="font-bold text-slate-800 border-b pb-2">Nhập đáp án của em:</h3>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Câu a) Chi phí sơn:</label>
+                            <div class="relative">
+                                <input type="text" id="ans1-a" placeholder="VD: 1000000" class="w-full pl-3 pr-12 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <span class="absolute right-3 top-3 text-slate-400 text-sm font-bold">VNĐ</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-500 mb-1">Câu b) Thể tích:</label>
+                            <div class="relative">
+                                <input type="text" id="ans1-b" placeholder="VD: 500" class="w-full pl-3 pr-10 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <span class="absolute right-3 top-3 text-slate-400 text-sm font-bold">m&sup3;</span>
+                            </div>
+                        </div>
+                        <button id="btn1" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition-all"><i class="fas fa-check mr-2"></i> Kiểm tra</button>
+                        <div id="msg1" class="hidden p-3 rounded-lg text-sm text-center font-medium mt-2 leading-relaxed"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sol1" class="hidden mt-4 bg-indigo-50 rounded-2xl border border-indigo-100 p-6 fade-in text-sm text-slate-700">
+                <h3 class="font-bold text-indigo-800 mb-3"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lời Giải Chi Tiết</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <p class="font-bold text-slate-900 mb-1">Câu a: Tính chi phí sơn</p>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Diện tích xung quanh phần dưới: 2 &times; (10 + 10) &times; 3 = 120 m&sup2;</li>
+                            <li>Diện tích xung quanh phần trên: 2 &times; (4 + 5) &times; 5 = 90 m&sup2;</li>
+                            <li>Diện tích các mặt trên cùng (ghép lại bằng đúng diện tích đáy): 10 &times; 10 = 100 m&sup2;</li>
+                        </ul>
+                        <p class="mt-2 text-indigo-700 font-bold">&rarr; Tổng S sơn: 310 m&sup2; &rArr; Chi phí: 310 &times; 25.000 = 7.750.000 đ</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-900 mb-1">Câu b: Tính thể tích</p>
+                        <ul class="list-disc ml-5 space-y-1">
+                            <li>Thể tích phần dưới: V<sub>1</sub> = 10 &times; 10 &times; 3 = 300 m&sup3;</li>
+                            <li>Thể tích phần trên: V<sub>2</sub> = 4 &times; 5 &times; 5 = 100 m&sup3;</li>
+                        </ul>
+                        <p class="mt-2 text-indigo-700 font-bold">&rarr; Tổng V = 300 + 100 = 400 m&sup3;</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 2. VẬN DỤNG (HÒN ĐÁ)                       -->
+        <!-- ========================================== -->
+        <section id="sec-vandung" class="border-t-4 border-teal-500 pt-8">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-teal-600 text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider shadow-md">Vận Dụng</span>
+                <h2 class="text-2xl font-bold text-slate-800">Thể tích hòn đá (Trang 52)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <p class="mb-4 text-sm text-slate-700 leading-relaxed">
+                        Bạn Na đổ nước vào bể kính (đáy <strong>50cm &times; 20cm</strong>), mực nước ban đầu là <strong>20cm</strong> (Hình a). 
+                        Sau khi đặt hòn đá vào, nước ngập đá và dâng lên mức <strong>25cm</strong> (Hình b). Tính thể tích hòn đá.
+                    </p>
+                    <div class="w-full bg-[#f0f9ff] rounded-xl border border-sky-100 py-6 flex flex-col md:flex-row justify-center items-center gap-8">
+                        <!-- Hình a -->
+                        <div class="text-center relative">
+                            <svg viewBox="0 0 220 160" class="w-40 h-auto drop-shadow-sm">
+                                <g stroke="#333" stroke-width="1" stroke-linejoin="round">
+                                    <polygon points="60,30 200,30 200,80 60,80" fill="none" />
+                                    <polygon points="20,70 60,30 60,80 20,120" fill="none" />
+                                    <!-- Khối nước -->
+                                    <polygon points="60,80 200,80 160,120 20,120" fill="#bae6fd" opacity="0.8"/>
+                                    <polygon points="20,90 160,90 160,120 20,120" fill="#7dd3fc" opacity="0.9"/>
+                                    <polygon points="160,90 200,50 200,80 160,120" fill="#38bdf8" opacity="0.7"/>
+                                    <polygon points="20,90 60,50 200,50 160,90" fill="#0ea5e9" opacity="0.5"/>
+                                    <!-- Viền bể ngoài -->
+                                    <polygon points="20,70 60,30 200,30 160,70" fill="none" />
+                                    <polygon points="20,70 160,70 160,120 20,120" fill="none" />
+                                    <polygon points="160,70 200,30 200,80 160,120" fill="none" />
+                                </g>
+                                <g class="text-book-font text-[10px]" fill="#333">
+                                    <text x="80" y="140">50 cm</text><text x="175" y="115">20 cm</text><text x="0" y="100">20 cm</text>
+                                    <line x1="15" y1="90" x2="15" y2="120" stroke="#333" stroke-width="0.8"/>
+                                </g>
+                            </svg>
+                            <p class="text-book-font font-italic text-sm mt-1">a)</p>
+                        </div>
+                        <!-- Hình b -->
+                        <div class="text-center relative">
+                            <svg viewBox="0 0 220 160" class="w-40 h-auto drop-shadow-sm">
+                                <g stroke="#333" stroke-width="1" stroke-linejoin="round">
+                                    <polygon points="60,30 200,30 200,80 60,80" fill="none" />
+                                    <!-- Khối nước dâng lên -->
+                                    <polygon points="60,80 200,80 160,120 20,120" fill="#bae6fd" opacity="0.8"/>
+                                    <polygon points="20,75 160,75 160,120 20,120" fill="#7dd3fc" opacity="0.9"/>
+                                    <polygon points="160,75 200,35 200,80 160,120" fill="#38bdf8" opacity="0.7"/>
+                                    <polygon points="20,75 60,35 200,35 160,75" fill="#0ea5e9" opacity="0.5"/>
+                                    <!-- Hòn đá -->
+                                    <path d="M 50 110 Q 60 90 90 95 T 130 100 Q 140 115 110 115 T 50 110" fill="#4338ca" stroke="#312e81" stroke-width="1.5" opacity="0.85"/>
+                                    <!-- Viền bể ngoài -->
+                                    <polygon points="20,70 60,30 200,30 160,70" fill="none" />
+                                    <polygon points="20,70 160,70 160,120 20,120" fill="none" />
+                                    <polygon points="160,70 200,30 200,80 160,120" fill="none" />
+                                </g>
+                                <g class="text-book-font text-[10px]" fill="#333">
+                                    <text x="80" y="140">50 cm</text><text x="175" y="115">20 cm</text><text x="0" y="90">25 cm</text>
+                                    <line x1="15" y1="75" x2="15" y2="120" stroke="#333" stroke-width="0.8"/>
+                                </g>
+                            </svg>
+                            <p class="text-book-font font-italic text-sm mt-1">b)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+                    <label class="block text-sm font-bold text-slate-800 mb-2">Thể tích hòn đá là:</label>
+                    <div class="relative mb-6">
+                        <input type="text" id="ans2" placeholder="Nhập kết quả..." class="w-full pl-4 pr-16 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-teal-500 outline-none">
+                        <span class="absolute right-4 top-3.5 text-slate-500 font-bold">cm&sup3;</span>
+                    </div>
+                    <button id="btn2" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-xl transition-all"><i class="fas fa-check mr-2"></i> Kiểm tra Đáp Án</button>
+                    <div id="msg2" class="hidden mt-4 p-3 rounded-lg text-sm text-center font-medium leading-relaxed"></div>
+                </div>
+            </div>
+
+            <div id="sol2" class="hidden mt-4 bg-teal-50 rounded-2xl border border-teal-100 p-6 fade-in text-sm text-slate-700">
+                <h3 class="font-bold text-teal-800 mb-2"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lời Giải Chi Tiết</h3>
+                <p>Phần thể tích nước dâng lên chính là thể tích của hòn đá được thả vào.</p>
+                <ul class="list-disc ml-5 space-y-1 mt-2">
+                    <li>Chiều cao của phần nước dâng lên: h = 25 - 20 = 5 (cm)</li>
+                    <li>Thể tích phần nước dâng lên là thể tích khối hộp có đáy 50x20 và cao 5cm.</li>
+                </ul>
+                <p class="mt-2 text-teal-700 font-bold">&rarr; Thể tích hòn đá: V = (50 &times; 20) &times; 5 = 1000 &times; 5 = 5000 (cm&sup3;)</p>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 3. BÀI 1 (CON XÚC XẮC)                     -->
+        <!-- ========================================== -->
+        <section id="sec-bai1" class="border-t-4 border-blue-500 pt-8">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-blue-600 text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider shadow-md">Bài 1</span>
+                <h2 class="text-2xl font-bold text-slate-800">Con xúc xắc (Trang 53)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <p class="mb-4 text-sm text-slate-700 leading-relaxed">
+                        Hùng làm một con xúc xắc lập phương (Hình a) từ tấm bìa (Hình b). Tính diện tích tấm bìa và thể tích xúc xắc.
+                    </p>
+                    <div class="w-full bg-[#f8fafc] rounded-xl border border-blue-100 py-6 flex flex-col sm:flex-row justify-center items-center gap-6">
+                        <div class="text-center">
+                            <svg viewBox="0 0 160 160" class="w-32 h-auto drop-shadow-md">
+                                <g stroke="#1e293b" stroke-width="2" stroke-linejoin="round">
+                                    <polygon points="30,60 80,30 130,60 80,90" fill="#bae6fd" />
+                                    <polygon points="30,60 80,90 80,140 30,110" fill="#7dd3fc" />
+                                    <polygon points="80,90 130,60 130,110 80,140" fill="#38bdf8" />
+                                </g>
+                                <g fill="#1e293b">
+                                    <circle cx="65" cy="55" r="4" /><circle cx="80" cy="60" r="4" /><circle cx="95" cy="65" r="4" />
+                                    <circle cx="50" cy="85" r="4" /><circle cx="65" cy="110" r="4" /><circle cx="105" cy="100" r="4" />
+                                </g>
+                                <g class="text-book-font text-[12px] font-bold" fill="#333">
+                                    <text x="5" y="55" transform="rotate(-30 30 60)">5 cm</text>
+                                    <text x="2" y="105" transform="rotate(30 30 110)">5 cm</text>
+                                    <text x="135" y="90">5 cm</text>
+                                </g>
+                            </svg>
+                            <p class="text-book-font font-italic text-sm mt-2">a)</p>
+                        </div>
+                        <div class="text-center">
+                            <svg viewBox="0 0 200 160" class="w-40 h-auto drop-shadow-sm">
+                                <g stroke="#1e293b" stroke-width="1.5" fill="#7dd3fc">
+                                    <rect x="20" y="60" width="40" height="40" /><rect x="60" y="60" width="40" height="40" />
+                                    <rect x="100" y="60" width="40" height="40" /><rect x="140" y="60" width="40" height="40" />
+                                    <rect x="60" y="20" width="40" height="40" /><rect x="60" y="100" width="40" height="40" />
+                                </g>
+                            </svg>
+                            <p class="text-book-font font-italic text-sm mt-2">b)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Diện tích tấm bìa:</label>
+                        <div class="relative">
+                            <input type="text" id="ans3-a" placeholder="VD: 100" class="w-full pl-3 pr-12 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <span class="absolute right-3 top-3 text-slate-400 text-sm font-bold">cm&sup2;</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Thể tích con xúc xắc:</label>
+                        <div class="relative">
+                            <input type="text" id="ans3-b" placeholder="VD: 50" class="w-full pl-3 pr-12 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <span class="absolute right-3 top-3 text-slate-400 text-sm font-bold">cm&sup3;</span>
+                        </div>
+                    </div>
+                    <button id="btn3" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl transition-all"><i class="fas fa-check mr-2"></i> Kiểm tra Đáp Án</button>
+                    <div id="msg3" class="hidden mt-2 p-3 rounded-lg text-sm text-center font-medium leading-relaxed"></div>
+                </div>
+            </div>
+            
+            <div id="sol3" class="hidden mt-4 bg-blue-50 rounded-2xl border border-blue-100 p-6 fade-in text-sm text-slate-700">
+                <p class="font-bold text-blue-800 mb-2"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lời Giải Chi Tiết:</p>
+                <ul class="list-disc ml-5 space-y-1">
+                    <li>Diện tích tấm bìa chính là diện tích toàn phần (gồm 6 mặt) của hình lập phương. <br> S = 6 &times; (5 &times; 5) = <strong>150 (cm&sup2;)</strong>.</li>
+                    <li>Thể tích xúc xắc (hình lập phương): <br> V = 5 &times; 5 &times; 5 = <strong>125 (cm&sup3;)</strong>.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. BÀI 2 (GẤP TẤM BÌA - HÌNH 6)            -->
+        <!-- ========================================== -->
+        <section id="sec-bai2" class="border-t-4 border-amber-500 pt-8">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-amber-500 text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider shadow-md">Bài 2</span>
+                <h2 class="text-2xl font-bold text-slate-800">Gấp hộp (Trang 53)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <p class="mb-4 text-sm text-slate-700 leading-relaxed">
+                        Hãy vẽ và gấp tấm bìa như <strong>Hình a</strong> thành một hình hộp chữ nhật như <strong>Hình b</strong>. Tính tổng diện tích các mặt và thể tích của hình hộp.
+                    </p>
+                    <div class="w-full bg-[#fffbeb] rounded-xl border border-amber-100 py-6 flex flex-col md:flex-row justify-center items-center gap-6">
+                        
+                        <!-- Hình a: Bản vẽ Net -->
+                        <div class="text-center">
+                            <svg viewBox="0 0 240 240" class="w-44 h-auto drop-shadow-sm">
+                                <g stroke="#b45309" stroke-width="1.5" fill="#fde68a">
+                                    <rect x="80" y="40" width="80" height="60" />
+                                    <rect x="40" y="40" width="40" height="60" />
+                                    <rect x="160" y="40" width="40" height="60" />
+                                    <rect x="80" y="100" width="80" height="40" />
+                                    <rect x="80" y="140" width="80" height="60" />
+                                    <rect x="80" y="200" width="80" height="40" />
+                                </g>
+                                <g stroke="#b45309" stroke-width="1" stroke-dasharray="3,3">
+                                    <line x1="80" y1="40" x2="80" y2="100" />
+                                    <line x1="160" y1="40" x2="160" y2="100" />
+                                    <line x1="80" y1="100" x2="160" y2="100" />
+                                    <line x1="80" y1="140" x2="160" y2="140" />
+                                    <line x1="80" y1="200" x2="160" y2="200" />
+                                </g>
+                                <g class="text-book-font text-[11px]" fill="#333" stroke="none">
+                                    <text x="60" y="25" text-anchor="middle">2 cm</text>
+                                    <text x="120" y="25" text-anchor="middle">4 cm</text>
+                                    <text x="180" y="25" text-anchor="middle">2 cm</text>
+                                    <g stroke="#333" stroke-width="0.5" stroke-dasharray="none">
+                                        <line x1="40" y1="30" x2="200" y2="30"/>
+                                        <line x1="40" y1="28" x2="40" y2="40"/>
+                                        <line x1="80" y1="28" x2="80" y2="40"/>
+                                        <line x1="160" y1="28" x2="160" y2="40"/>
+                                        <line x1="200" y1="28" x2="200" y2="40"/>
+                                    </g>
+                                </g>
+                                <g class="text-book-font text-[11px]" fill="#333" stroke="none">
+                                    <text x="220" y="125" text-anchor="start">2 cm</text>
+                                    <text x="220" y="175" text-anchor="start">3 cm</text>
+                                    <text x="220" y="225" text-anchor="start">2 cm</text>
+                                    <g stroke="#333" stroke-width="0.5" stroke-dasharray="none">
+                                        <line x1="165" y1="100" x2="215" y2="100"/>
+                                        <line x1="165" y1="140" x2="215" y2="140"/>
+                                        <line x1="165" y1="200" x2="215" y2="200"/>
+                                        <line x1="165" y1="240" x2="215" y2="240"/>
+                                        <line x1="210" y1="100" x2="210" y2="240"/>
+                                    </g>
+                                </g>
+                            </svg>
+                            <p class="text-book-font font-italic text-sm mt-2">a)</p>
+                        </div>
+
+                        <!-- Hình b: Hộp 3D -->
+                        <div class="text-center">
+                            <svg viewBox="0 0 200 160" class="w-40 h-auto drop-shadow-md">
+                                <g stroke="#b45309" stroke-width="1.5" stroke-linejoin="round">
+                                    <g stroke-dasharray="2,2" stroke-width="1" opacity="0.5">
+                                        <line x1="70" y1="40" x2="150" y2="40" />
+                                        <line x1="70" y1="40" x2="70" y2="100" />
+                                        <line x1="70" y1="100" x2="30" y2="120" />
+                                    </g>
+                                    <polygon points="110,120 150,100 150,40 110,60" fill="#fcd34d" />
+                                    <polygon points="30,60 110,60 150,40 70,40" fill="#fef3c7" />
+                                    <polygon points="30,60 110,60 110,120 30,120" fill="#fde68a" />
+                                </g>
+                                <g class="text-book-font text-[11px]" fill="#333">
+                                    <text x="60" y="138">4 cm</text>
+                                    <text x="135" y="125">2 cm</text>
+                                    <text x="5" y="95">3 cm</text>
+                                    <g stroke="#333" stroke-width="0.5">
+                                        <line x1="30" y1="125" x2="110" y2="125"/>
+                                        <line x1="30" y1="120" x2="30" y2="128"/>
+                                        <line x1="110" y1="120" x2="110" y2="128"/>
+                                        <line x1="115" y1="125" x2="155" y2="105"/>
+                                        <line x1="25" y1="60" x2="25" y2="120"/>
+                                        <line x1="20" y1="60" x2="30" y2="60"/>
+                                        <line x1="20" y1="120" x2="30" y2="120"/>
+                                    </g>
+                                </g>
+                            </svg>
+                            <p class="text-book-font font-italic text-sm mt-2">b)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Tổng diện tích các mặt:</label>
+                        <div class="relative">
+                            <input type="text" id="ans4-a" placeholder="VD: 50" class="w-full pl-3 pr-12 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none">
+                            <span class="absolute right-3 top-3 text-slate-400 text-sm font-bold">cm&sup2;</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">Thể tích hình hộp:</label>
+                        <div class="relative">
+                            <input type="text" id="ans4-b" placeholder="VD: 20" class="w-full pl-3 pr-12 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none">
+                            <span class="absolute right-3 top-3 text-slate-400 text-sm font-bold">cm&sup3;</span>
+                        </div>
+                    </div>
+                    <button id="btn4" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-xl transition-all"><i class="fas fa-box-open mr-2"></i> Kiểm tra Đáp Án</button>
+                    <div id="msg4" class="hidden mt-2 p-3 rounded-lg text-sm text-center font-medium leading-relaxed"></div>
+                </div>
+            </div>
+
+            <div id="sol4" class="hidden mt-4 bg-amber-50 rounded-2xl border border-amber-200 p-6 fade-in text-sm text-slate-700">
+                <p class="font-bold text-amber-800 mb-2"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lời Giải Chi Tiết:</p>
+                <p>Quan sát hình b, hộp có kích thước: Dài (d) = 4cm, Rộng (r) = 2cm, Cao (c) = 3cm.</p>
+                <ul class="list-disc ml-5 space-y-1 mt-2">
+                    <li>Tổng diện tích các mặt (Diện tích toàn phần): <br> S = 2 &times; (d.r + d.c + r.c) = 2 &times; (4&times;2 + 4&times;3 + 2&times;3) = 2 &times; (8 + 12 + 6) = <strong>52 (cm&sup2;)</strong>.</li>
+                    <li>Thể tích hình hộp: <br> V = d &times; r &times; c = 4 &times; 2 &times; 3 = <strong>24 (cm&sup3;)</strong>.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. BÀI 3 (CẮT BÁNH KEM)                    -->
+        <!-- ========================================== -->
+        <section id="sec-bai3" class="border-t-4 border-rose-500 pt-8 pb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <span class="bg-rose-500 text-white font-bold px-4 py-1.5 rounded-full text-sm uppercase tracking-wider shadow-md">Bài 3</span>
+                <h2 class="text-2xl font-bold text-slate-800">Cắt bánh kem (Trang 53)</h2>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                    <p class="mb-4 text-sm text-slate-700 leading-relaxed">
+                        Một chiếc bánh kem có dạng hình hộp chữ nhật với <strong>chiều dài 30 cm</strong>, <strong>chiều rộng 20 cm</strong> và <strong>chiều cao 15 cm</strong>. Người ta cắt đi một miếng bánh có dạng hình lập phương <strong>cạnh 5 cm</strong>. Tính thể tích phần còn lại của chiếc bánh kem.
+                    </p>
+                    
+                    <div class="w-full bg-[#fff1f2] rounded-xl border border-rose-100 py-6 flex justify-center items-center">
+                        <svg viewBox="0 0 280 180" class="w-full max-w-[260px] h-auto drop-shadow-md">
+                            <g stroke="#9f1239" stroke-width="1.5" stroke-linejoin="round">
+                                <!-- Mặt trên bánh kem -->
+                                <polygon points="40,80 160,80 175,65 205,65 230,40 80,40" fill="#ffe4e6" />
+                                <!-- Mặt trước -->
+                                <polygon points="40,80 160,80 160,110 190,110 190,140 40,140" fill="#fb7185" />
+                                <!-- Mặt phải -->
+                                <polygon points="190,140 190,110 205,95 205,65 230,40 230,100" fill="#e11d48" />
+                                
+                                <!-- Mặt cắt xốp bên trong -->
+                                <polygon points="160,80 160,110 175,95 175,65" fill="#fff1f2" /> 
+                                <polygon points="160,110 190,110 205,95 175,95" fill="#fecdd3" />
+                                
+                                <!-- Đường kẻ sọc (lớp nhân bánh) -->
+                                <path d="M40,120 L160,120 M190,125 L215,100" stroke="#713f12" stroke-width="2.5" opacity="0.6" stroke-linecap="round"/>
+                            </g>
+                            
+                            <!-- Trang trí quả dâu tây trên mặt -->
+                            <circle cx="100" cy="55" r="4" fill="#be123c" />
+                            <circle cx="140" cy="50" r="4" fill="#be123c" />
+                            <circle cx="180" cy="45" r="4" fill="#be123c" />
+                            <circle cx="130" cy="70" r="4" fill="#be123c" />
+                            <circle cx="80" cy="65" r="4" fill="#be123c" />
+                            
+                            <g class="text-book-font text-[12px]" fill="#881337">
+                                <!-- Chiều dài 30cm -->
+                                <text x="105" y="165" text-anchor="middle">30 cm</text>
+                                <line x1="40" y1="150" x2="190" y2="150" stroke="#881337" stroke-width="0.8"/>
+                                <line x1="40" y1="145" x2="40" y2="155" stroke="#881337" stroke-width="0.8"/>
+                                <line x1="190" y1="145" x2="190" y2="155" stroke="#881337" stroke-width="0.8"/>
+                                
+                                <!-- Chiều rộng 20cm -->
+                                <text x="225" y="140" text-anchor="middle">20 cm</text>
+                                <line x1="200" y1="145" x2="240" y2="105" stroke="#881337" stroke-width="0.8"/>
+                                <line x1="196" y1="141" x2="204" y2="149" stroke="#881337" stroke-width="0.8"/>
+                                <line x1="236" y1="101" x2="244" y2="109" stroke="#881337" stroke-width="0.8"/>
+
+                                <!-- Chiều cao 15cm -->
+                                <text x="15" y="115" text-anchor="middle">15 cm</text>
+                                <line x1="30" y1="140" x2="30" y2="80" stroke="#881337" stroke-width="0.8"/>
+                                <line x1="25" y1="140" x2="35" y2="140" stroke="#881337" stroke-width="0.8"/>
+                                <line x1="25" y1="80" x2="35" y2="80" stroke="#881337" stroke-width="0.8"/>
+                                
+                                <!-- Ghi chú phần cắt -->
+                                <path d="M220,70 Q 235 60 250 80" fill="none" stroke="#be123c" stroke-width="1" stroke-dasharray="2,2"/>
+                                <polygon points="220,70 225,65 228,73" fill="#be123c" />
+                                <text x="230" y="95" fill="#be123c" font-size="10">Cắt góc</text>
+                                <text x="230" y="108" fill="#be123c" font-size="10">5 x 5 x 5</text>
+                            </g>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-center">
+                    <label class="block text-sm font-bold text-slate-800 mb-2">Thể tích phần còn lại:</label>
+                    <div class="relative mb-6">
+                        <input type="text" id="ans5" placeholder="Nhập kết quả..." class="w-full pl-4 pr-16 py-3 rounded-lg border border-slate-300 focus:ring-2 focus:ring-rose-500 outline-none text-lg font-medium">
+                        <span class="absolute right-4 top-3.5 text-slate-500 font-bold">cm&sup3;</span>
+                    </div>
+                    <button id="btn5" class="w-full bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 rounded-xl transition-all"><i class="fas fa-cake-candles mr-2"></i> Kiểm tra Đáp Án</button>
+                    <div id="msg5" class="hidden mt-4 p-3 rounded-lg text-sm text-center font-medium leading-relaxed"></div>
+                </div>
+            </div>
+
+            <div id="sol5" class="hidden mt-4 bg-rose-50 rounded-2xl border border-rose-200 p-6 fade-in text-sm text-slate-700">
+                <h3 class="font-bold text-rose-800 mb-2"><i class="fas fa-lightbulb text-yellow-500 mr-2"></i> Lời Giải Chi Tiết</h3>
+                <ul class="list-disc ml-5 space-y-2">
+                    <li>Thể tích chiếc bánh kem lúc đầu (Hình hộp chữ nhật): <br> V<sub>đầu</sub> = 30 &times; 20 &times; 15 = <strong>9.000 (cm&sup3;)</strong></li>
+                    <li>Thể tích phần bánh bị cắt đi (Hình lập phương): <br> V<sub>cắt</sub> = 5 &times; 5 &times; 5 = <strong>125 (cm&sup3;)</strong></li>
+                    <li class="pt-2 text-rose-700">Thể tích phần còn lại của chiếc bánh: <br> <strong class="text-lg">V = 9.000 - 125 = 8.875 (cm&sup3;)</strong></li>
+                </ul>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- MAIN JAVASCRIPT -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- Hàm Tiện Ích ---
+            function cleanNum(str) { return Number(str.replace(/\D/g, '')); }
+            
+            function formatInput(id) {
+                const el = document.getElementById(id);
+                if(!el) return;
+                el.addEventListener('input', function() {
+                    let val = this.value.replace(/\D/g, '');
+                    this.value = val ? new Intl.NumberFormat('vi-VN').format(val) : '';
+                });
+            }
+
+            function showFB(el, isSuccess, isPartial, msg) {
+                el.classList.remove('hidden');
+                // Xóa animation cũ để trigger lại
+                el.classList.remove('fade-in');
+                void el.offsetWidth; // trigger reflow
+                el.classList.add('fade-in');
+                
+                if (isSuccess) el.className = "mt-4 p-3 rounded-xl text-center font-bold bg-green-50 text-green-800 border border-green-200 fade-in";
+                else if (isPartial) el.className = "mt-4 p-3 rounded-xl text-center font-medium bg-blue-50 text-blue-800 border border-blue-200 fade-in";
+                else el.className = "mt-4 p-3 rounded-xl text-center font-medium bg-red-50 text-red-800 border border-red-200 fade-in";
+                el.innerHTML = msg;
+            }
+
+            function showWarn(el, msg) {
+                el.classList.remove('hidden');
+                el.className = "mt-4 p-3 rounded-xl text-center font-medium bg-yellow-50 text-yellow-800 border border-yellow-200 fade-in";
+                el.innerHTML = `<i class="fas fa-exclamation-triangle mr-1"></i> ${msg}`;
+            }
+
+            // --- Áp dụng format ---
+            const inputs = ['ans1-a', 'ans1-b', 'ans2', 'ans3-a', 'ans3-b', 'ans4-a', 'ans4-b', 'ans5'];
+            inputs.forEach(formatInput);
+
+            // --- HỆ THỐNG GỢI Ý & THEO DÕI SỐ LẦN NHẬP ---
+            const attempts = { q1: 0, q2: 0, q3: 0, q4: 0, q5: 0 };
+            const hints = {
+                q1: [
+                    "<strong>Gợi ý 1:</strong> Ở câu a, khi tính diện tích sơn em nhớ trừ đi mặt tiếp đất (mặt đáy dưới cùng) và phần mặt bị che khuất nhé.",
+                    "<strong>Gợi ý 2:</strong> Ở câu b, thể tích tổng sẽ bằng thể tích khối hộp chữ nhật bên dưới cộng với khối bên trên."
+                ],
+                q2: [
+                    "<strong>Gợi ý 1:</strong> Thể tích của hòn đá chính là thể tích của phần nước được dâng lên thêm đó.",
+                    "<strong>Gợi ý 2:</strong> Em hãy tính chiều cao phần nước dâng lên trước (25 - 20 = 5cm), sau đó tính thể tích phần nước đó."
+                ],
+                q3: [
+                    "<strong>Gợi ý 1:</strong> Xúc xắc là hình lập phương, tấm bìa tạo ra nó gồm có 6 mặt là hình vuông bằng nhau.",
+                    "<strong>Gợi ý 2:</strong> Diện tích 1 mặt là 5x5. Thể tích hình lập phương là cạnh &times; cạnh &times; cạnh."
+                ],
+                q4: [
+                    "<strong>Gợi ý 1:</strong> Quan sát kĩ hình 6b, hộp có Chiều dài = 4cm, Chiều rộng = 2cm, Chiều cao = 3cm.",
+                    "<strong>Gợi ý 2:</strong> S<sub>toàn phần</sub> = 2 &times; (d.r + d.c + r.c) và Thể tích V = d.r.c"
+                ],
+                q5: [
+                    "<strong>Gợi ý 1:</strong> Thể tích phần bánh còn lại = Thể tích cả cái bánh ban đầu trừ đi thể tích miếng bánh nhỏ bị cắt.",
+                    "<strong>Gợi ý 2:</strong> Bánh ban đầu là khối hộp (30x20x15). Miếng cắt đi là khối lập phương (5x5x5). Em tính từng cái rồi trừ đi nhé."
+                ]
+            };
+
+            function handleLogic(qId, btnId, msgId, solId, isCorrectCallback) {
+                document.getElementById(btnId).addEventListener('click', () => {
+                    const msg = document.getElementById(msgId);
+                    const sol = document.getElementById(solId);
+                    const status = isCorrectCallback(); // 0: empty, 1: correct, 2: partial, 3: wrong
+
+                    if (status === 0) return showWarn(msg, 'Em nhớ nhập đáp án trước khi kiểm tra nhé!');
+
+                    if (status === 1) {
+                        showFB(msg, true, false, '<i class="fas fa-star text-yellow-500 mr-1"></i> Xuất sắc! Em làm rất chính xác.');
+                        sol.classList.remove('hidden'); // Hiển thị lời giải
+                    } else {
+                        attempts[qId]++;
+                        let isPartial = (status === 2);
+                        
+                        if (attempts[qId] === 1) {
+                            let prefix = isPartial ? "Em tính đúng được 1 ý rồi. " : "Chưa chính xác. ";
+                            showFB(msg, false, isPartial, prefix + hints[qId][0] + " Em tính lại thử xem!");
+                        } else if (attempts[qId] === 2) {
+                            let prefix = isPartial ? "Gần tới đích rồi! " : "Cố lên em! ";
+                            showFB(msg, false, isPartial, prefix + hints[qId][1]);
+                        } else {
+                            // Lần thứ 3 sai
+                            showFB(msg, false, false, 'Bài này hơi khó phải không? Em hãy xem lời giải chi tiết bên dưới nhé!');
+                            sol.classList.remove('hidden'); // Mở khóa lời giải
+                        }
+                    }
+                });
+            }
+
+            // --- RÀNG BUỘC KIỂM TRA CHO TỪNG BÀI ---
+
+            handleLogic('q1', 'btn1', 'msg1', 'sol1', () => {
+                const vA = cleanNum(document.getElementById('ans1-a').value);
+                const vB = cleanNum(document.getElementById('ans1-b').value);
+                if (!vA || !vB) return 0;
+                if (vA === 7750000 && vB === 400) return 1;
+                if (vA === 7750000 || vB === 400) return 2; // Đúng 1 nửa
+                return 3;
+            });
+
+            handleLogic('q2', 'btn2', 'msg2', 'sol2', () => {
+                const val = cleanNum(document.getElementById('ans2').value);
+                if (!val) return 0;
+                return val === 5000 ? 1 : 3;
+            });
+
+            handleLogic('q3', 'btn3', 'msg3', 'sol3', () => {
+                const vA = cleanNum(document.getElementById('ans3-a').value);
+                const vB = cleanNum(document.getElementById('ans3-b').value);
+                if (!vA || !vB) return 0;
+                if (vA === 150 && vB === 125) return 1;
+                if (vA === 150 || vB === 125) return 2;
+                return 3;
+            });
+
+            handleLogic('q4', 'btn4', 'msg4', 'sol4', () => {
+                const vA = cleanNum(document.getElementById('ans4-a').value);
+                const vB = cleanNum(document.getElementById('ans4-b').value);
+                if (!vA || !vB) return 0;
+                if (vA === 52 && vB === 24) return 1;
+                if (vA === 52 || vB === 24) return 2;
+                return 3;
+            });
+
+            handleLogic('q5', 'btn5', 'msg5', 'sol5', () => {
+                const val = cleanNum(document.getElementById('ans5').value);
+                if (!val) return 0;
+                return val === 8875 ? 1 : 3;
+            });
+
+        });
+    </script>
+</body>
+</html>
