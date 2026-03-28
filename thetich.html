@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mô phỏng Thể tích Hình hộp Chữ nhật</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
+    <style>
+        body { margin: 0; background-color: #f1f5f9; overflow: hidden; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #canvas-container canvas { display: block; }
+        .step-transition { transition: all 0.5s ease-in-out; }
+        input[type=range] { accent-color: #4f46e5; }
+        
+        /* Custom scrollbar for the control panel */
+        #scroll-panel::-webkit-scrollbar { width: 5px; }
+        #scroll-panel::-webkit-scrollbar-track { background: #f1f5f9; }
+        #scroll-panel::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="h-screen w-full flex flex-col md:flex-row p-2 gap-2">
+
+    <!-- 3D VIEWPORT -->
+    <div class="flex-[1.5] bg-white rounded-2xl shadow-sm border border-slate-200 relative overflow-hidden">
+        <div class="absolute top-4 left-4 z-10 bg-white/90 backdrop-blur-sm p-2 rounded-lg shadow-sm border border-slate-100 text-[10px] md:text-xs text-slate-500 pointer-events-none">
+            🖱️ Chuột trái: Xoay | 🖱️ Chuột phải: Di chuyển | 🔍 Cuộn: Phóng to/nhỏ
+        </div>
+        <div id="canvas-container" class="w-full h-full"></div>
+    </div>
+
+    <!-- CONTROL PANEL -->
+    <div class="flex-1 bg-white rounded-2xl shadow-sm border border-slate-200 flex flex-col overflow-hidden max-h-screen">
+        <div class="p-4 border-b border-slate-100 bg-slate-50/50">
+            <h1 class="text-lg font-bold text-slate-800">Khám phá Thể tích</h1>
+            <p class="text-xs text-slate-500 italic">Tự xây dựng công thức qua thực tế</p>
+        </div>
+
+        <div id="scroll-panel" class="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth">
+            
+            <!-- SETUP SECTION -->
+            <div id="setup-section" class="space-y-4">
+                <div class="space-y-3 p-3 bg-slate-50 rounded-xl">
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <label class="text-red-600 uppercase">Chiều dài (a)</label>
+                            <span id="v-len">5</span>
+                        </div>
+                        <input type="range" id="s-len" min="2" max="7" value="5" class="w-full">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <label class="text-green-600 uppercase">Chiều rộng (b)</label>
+                            <span id="v-wid">3</span>
+                        </div>
+                        <input type="range" id="s-wid" min="2" max="7" value="3" class="w-full">
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-xs font-bold mb-1">
+                            <label class="text-blue-600 uppercase">Chiều cao (h)</label>
+                            <span id="v-hei">4</span>
+                        </div>
+                        <input type="range" id="s-hei" min="2" max="6" value="4" class="w-full">
+                    </div>
+                </div>
+                <button id="btn-start" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                    Bắt đầu mô phỏng
+                </button>
+            </div>
+
+            <!-- INTERACTIVE LESSON SECTION -->
+            <div id="lesson-section" class="hidden space-y-4 pb-8">
+                <div class="flex items-center justify-between">
+                    <button id="btn-reset" class="text-xs text-indigo-600 font-bold hover:underline">← Quay lại chỉnh sửa</button>
+                    <span class="text-[10px] bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full font-mono">
+                        a:<span id="inf-a">5</span> b:<span id="inf-b">3</span> h:<span id="inf-h">4</span>
+                    </span>
+                </div>
+
+                <!-- Step 1: Base Layer -->
+                <div id="step-1" class="p-4 bg-orange-50 border border-orange-100 rounded-xl space-y-3 opacity-0 translate-y-4 transition-all duration-500">
+                    <p class="text-sm text-orange-900 font-medium">1. Quan sát lớp đầu tiên (màu cam). Có bao nhiêu khối lập phương ở mặt đáy này?</p>
+                    <div class="flex gap-2">
+                        <input type="number" id="ans-1" class="w-full p-2 rounded-lg border border-orange-200 focus:ring-2 focus:ring-orange-400 outline-none" placeholder="Nhập số...">
+                        <button id="chk-1" class="bg-orange-500 text-white px-4 py-2 rounded-lg font-bold text-sm">Xác nhận</button>
+                    </div>
+                    <p id="msg-1" class="text-xs font-bold hidden"></p>
+                </div>
+
+                <!-- Step 2: Total Cubes -->
+                <div id="step-2" class="p-4 bg-emerald-50 border border-emerald-100 rounded-xl space-y-3 hidden opacity-0 translate-y-4 transition-all duration-500">
+                    <p class="text-sm text-emerald-900 font-medium">2. Hình hộp này có <span id="inf-layers" class="font-bold underline"></span> lớp như thế. Tổng cộng có bao nhiêu khối lập phương?</p>
+                    <div class="flex gap-2">
+                        <input type="number" id="ans-2" class="w-full p-2 rounded-lg border border-emerald-200 focus:ring-2 focus:ring-emerald-400 outline-none" placeholder="Nhập số...">
+                        <button id="chk-2" class="bg-emerald-500 text-white px-4 py-2 rounded-lg font-bold text-sm">Xác nhận</button>
+                    </div>
+                    <p id="msg-2" class="text-xs font-bold hidden"></p>
+                </div>
+
+                <!-- Step 3: Formula Selection -->
+                <div id="step-3" class="p-4 bg-purple-50 border border-purple-100 rounded-xl space-y-3 hidden opacity-0 translate-y-4 transition-all duration-500">
+                    <p class="text-sm text-purple-900 font-medium">3. Dựa vào cách em vừa tính, công thức nào đúng để tìm <strong>Thể tích (V)</strong> của hình hộp?</p>
+                    <div class="space-y-2">
+                        <button class="formula-opt w-full text-left p-3 bg-white border border-purple-100 rounded-lg text-sm hover:bg-purple-100 transition" data-val="wrong">V = a + b + h</button>
+                        <button class="formula-opt w-full text-left p-3 bg-white border border-purple-100 rounded-lg text-sm hover:bg-purple-100 transition" data-val="wrong">V = (a + b) × 2 × h</button>
+                        <button class="formula-opt w-full text-left p-3 bg-white border border-purple-100 rounded-lg text-sm hover:bg-purple-100 transition" data-val="correct">V = a × b × h</button>
+                    </div>
+                    <p id="msg-3" class="text-xs font-bold hidden"></p>
+                </div>
+
+                <!-- Final Summary -->
+                <div id="step-final" class="p-6 bg-indigo-600 text-white rounded-2xl text-center space-y-3 hidden opacity-0 scale-90 transition-all duration-500">
+                    <div class="text-3xl">🎯</div>
+                    <h3 class="font-bold text-lg">Chính xác hoàn toàn!</h3>
+                    <p class="text-xs opacity-90 leading-relaxed">
+                        Thể tích hình hộp chữ nhật bằng diện tích đáy nhân với chiều cao:<br>
+                        <span class="text-lg font-mono">V = a × b × h</span>
+                    </p>
+                    <button id="btn-replay" class="bg-white text-indigo-600 px-6 py-2 rounded-full font-bold text-sm shadow-md">Thử lại với số khác</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Cấu hình Three.js ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+        
+        const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+        camera.position.set(12, 10, 15);
+
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.shadowMap.enabled = true;
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight.position.set(10, 20, 10);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+
+        const cubesGroup = new THREE.Group();
+        scene.add(cubesGroup);
+
+        // Vật liệu và Hình học
+        const boxGeo = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+        const matBase = new THREE.MeshPhongMaterial({ color: 0xf59e0b });
+        const matNormal = new THREE.MeshPhongMaterial({ color: 0x10b981 });
+        const edgeMat = new THREE.LineBasicMaterial({ color: 0x000000, opacity: 0.1, transparent: true });
+
+        let a = 5, b = 3, h = 4;
+        let animatedElements = [];
+
+        // --- Logic vẽ ---
+        function clearScene() {
+            cubesGroup.clear();
+            animatedElements = [];
+        }
+
+        function drawFullBox(isGhost = false) {
+            clearScene();
+            const offX = (a - 1) / 2;
+            const offZ = (b - 1) / 2;
+
+            for(let y=0; y<h; y++) {
+                for(let x=0; x<a; x++) {
+                    for(let z=0; z<b; z++) {
+                        const mesh = new THREE.Mesh(boxGeo, y === 0 ? matBase : matNormal);
+                        const edges = new THREE.EdgesGeometry(boxGeo);
+                        const line = new THREE.LineSegments(edges, edgeMat);
+                        mesh.add(line);
+                        mesh.position.set(x - offX, y, z - offZ);
+                        
+                        if(isGhost) mesh.scale.set(0,0,0);
+                        
+                        cubesGroup.add(mesh);
+                        animatedElements.push({ mesh, x, y, z });
+                    }
+                }
+            }
+        }
+
+        // --- Animation ---
+        function animateLayer(layerY, onComplete) {
+            const layerCubes = animatedElements.filter(c => c.y === layerY);
+            let done = 0;
+            layerCubes.forEach(c => {
+                const delay = (c.x + c.z) * 50;
+                new TWEEN.Tween(c.mesh.scale)
+                    .to({ x: 1, y: 1, z: 1 }, 500)
+                    .delay(delay)
+                    .easing(TWEEN.Easing.Back.Out)
+                    .onComplete(() => {
+                        done++;
+                        if(done === layerCubes.length && onComplete) onComplete();
+                    })
+                    .start();
+            });
+        }
+
+        // --- UI Control ---
+        const s_len = document.getElementById('s-len'), s_wid = document.getElementById('s-wid'), s_hei = document.getElementById('s-hei');
+        const v_len = document.getElementById('v-len'), v_wid = document.getElementById('v-wid'), v_hei = document.getElementById('v-hei');
+        const setupSec = document.getElementById('setup-section'), lessonSec = document.getElementById('lesson-section');
+        const scrollPanel = document.getElementById('scroll-panel');
+
+        function updateValues() {
+            a = parseInt(s_len.value); b = parseInt(s_wid.value); h = parseInt(s_hei.value);
+            v_len.innerText = a; v_wid.innerText = b; v_hei.innerText = h;
+            drawFullBox(false);
+        }
+
+        [s_len, s_wid, s_hei].forEach(s => s.addEventListener('input', updateValues));
+
+        document.getElementById('btn-start').addEventListener('click', () => {
+            setupSec.classList.add('hidden');
+            lessonSec.classList.remove('hidden');
+            document.getElementById('inf-a').innerText = a;
+            document.getElementById('inf-b').innerText = b;
+            document.getElementById('inf-h').innerText = h;
+            document.getElementById('inf-layers').innerText = h;
+            
+            clearScene();
+            drawFullBox(true); // Tạo box rỗng để sẵn sàng chạy animation
+            
+            const s1 = document.getElementById('step-1');
+            s1.classList.remove('hidden');
+            setTimeout(() => {
+                s1.classList.add('opacity-100', 'translate-y-0');
+                animateLayer(0);
+            }, 100);
+        });
+
+        // Kiểm tra Bước 1
+        document.getElementById('chk-1').addEventListener('click', () => {
+            const val = parseInt(document.getElementById('ans-1').value);
+            const msg = document.getElementById('msg-1');
+            msg.classList.remove('hidden', 'text-red-500', 'text-green-600');
+            
+            if(val === a * b) {
+                msg.innerText = "Chính xác! Mặt đáy có " + (a*b) + " khối.";
+                msg.classList.add('text-green-600');
+                document.getElementById('chk-1').disabled = true;
+                
+                // Chạy animation các lớp còn lại
+                let currentL = 1;
+                const interval = setInterval(() => {
+                    animateLayer(currentL);
+                    currentL++;
+                    if(currentL >= h) {
+                        clearInterval(interval);
+                        const s2 = document.getElementById('step-2');
+                        s2.classList.remove('hidden');
+                        setTimeout(() => {
+                            s2.classList.add('opacity-100', 'translate-y-0');
+                            scrollPanel.scrollTo(0, scrollPanel.scrollHeight);
+                        }, 300);
+                    }
+                }, 400);
+            } else {
+                msg.innerText = "Thử lại nhé! Hãy lấy Dài × Rộng.";
+                msg.classList.add('text-red-500');
+            }
+        });
+
+        // Kiểm tra Bước 2
+        document.getElementById('chk-2').addEventListener('click', () => {
+            const val = parseInt(document.getElementById('ans-2').value);
+            const msg = document.getElementById('msg-2');
+            msg.classList.remove('hidden', 'text-red-500', 'text-green-600');
+
+            if(val === a * b * h) {
+                msg.innerText = "Tuyệt vời! Tổng cộng là " + (a*b*h) + " khối.";
+                msg.classList.add('text-green-600');
+                document.getElementById('chk-2').disabled = true;
+                
+                const s3 = document.getElementById('step-3');
+                s3.classList.remove('hidden');
+                setTimeout(() => {
+                    s3.classList.add('opacity-100', 'translate-y-0');
+                    scrollPanel.scrollTo(0, scrollPanel.scrollHeight);
+                }, 300);
+            } else {
+                msg.innerText = "Gợi ý: Lấy kết quả ở Bước 1 nhân với " + h + " lớp.";
+                msg.classList.add('text-red-500');
+            }
+        });
+
+        // Kiểm tra Bước 3
+        document.querySelectorAll('.formula-opt').forEach(opt => {
+            opt.addEventListener('click', function() {
+                const msg = document.getElementById('msg-3');
+                msg.classList.remove('hidden', 'text-red-500', 'text-purple-600');
+
+                if(this.getAttribute('data-val') === 'correct') {
+                    this.classList.add('bg-purple-600', 'text-white');
+                    msg.innerText = "Rất giỏi! Em đã tìm ra công thức tính thể tích.";
+                    msg.classList.add('text-purple-600');
+                    
+                    document.querySelectorAll('.formula-opt').forEach(b => b.disabled = true);
+                    
+                    const f = document.getElementById('step-final');
+                    f.classList.remove('hidden');
+                    setTimeout(() => {
+                        f.classList.add('opacity-100', 'scale-100');
+                        scrollPanel.scrollTo(0, scrollPanel.scrollHeight);
+                    }, 500);
+                } else {
+                    msg.innerText = "Chưa đúng, hãy nhớ lại các phép tính em vừa làm ở trên.";
+                    msg.classList.add('text-red-500');
+                }
+            });
+        });
+
+        // Nút Replay/Reset
+        const resetAll = () => {
+            location.reload(); // Cách đơn giản nhất để reset toàn bộ trạng thái
+        };
+        document.getElementById('btn-reset').addEventListener('click', resetAll);
+        document.getElementById('btn-replay').addEventListener('click', resetAll);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+
+        updateValues();
+        function loop(time) {
+            requestAnimationFrame(loop);
+            TWEEN.update(time);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        loop();
+    </script>
+</body>
+</html>
